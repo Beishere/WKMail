@@ -12,7 +12,8 @@
     </div>
 
     <div class="border-b-2 border-slate-900 pb-4 text-center">
-        <h1 class="text-lg font-bold uppercase tracking-wide">Rekapitulasi & Laporan Disposisi Surat Universitas</h1>
+        <img src="{{ asset('kop-ukwk.jpeg') }}" alt="Kop Surat UKWK" class="mx-auto mb-3 max-h-36 w-full object-contain">
+        <h1 class="text-base font-bold uppercase tracking-wide">Rekapitulasi & Laporan Disposisi Surat</h1>
         <p class="text-xs text-slate-600">Periode: {{ $dari->translatedFormat('d F Y') }} s/d {{ $sampai->translatedFormat('d F Y') }}</p>
     </div>
 

@@ -36,9 +36,11 @@ class MasterSeeder extends Seeder
         $hmj = Unit::create(['nama_unit' => 'HMJ - Bagian Kemahasiswaan', 'jenis_unit' => 'unit_teknis', 'id_induk' => $wr3->id_unit]);
         $ft = Unit::create(['nama_unit' => 'Fakultas Teknik', 'jenis_unit' => 'fakultas']);
         $feb = Unit::create(['nama_unit' => 'Fakultas Ekonomi dan Bisnis', 'jenis_unit' => 'fakultas']);
-        $hmjTi = Unit::create(['nama_unit' => 'HMJ Teknik Informatika', 'jenis_unit' => 'hmj', 'id_induk' => $ft->id_unit]);
-        $alumni = Unit::create(['nama_unit' => 'Ikatan Alumni', 'jenis_unit' => 'alumni']);
-        $yayasan = Unit::create(['nama_unit' => 'Yayasan Pendidikan', 'jenis_unit' => 'yayasan']);
+        $fp = Unit::create(['nama_unit' => 'Fakultas Pertanian', 'jenis_unit' => 'fakultas']);
+        $fh = Unit::create(['nama_unit' => 'Fakultas Hukum', 'jenis_unit' => 'fakultas']);
+        $hmjTi = Unit::create(['nama_unit' => 'HMJ Sistem Informasi', 'jenis_unit' => 'hmj', 'id_induk' => $ft->id_unit]);
+        $alumni = Unit::create(['nama_unit' => 'Ikatan Alumni UKWK', 'jenis_unit' => 'alumni']);
+        $yayasan = Unit::create(['nama_unit' => 'Yayasan PTK Adisucipto Malang', 'jenis_unit' => 'yayasan']);
         $eksternal = Unit::create(['nama_unit' => 'Pihak Eksternal', 'jenis_unit' => 'eksternal']);
 
         // ------------------------------------------------------------ KODE SUMBER
@@ -81,6 +83,9 @@ class MasterSeeder extends Seeder
                 'nama_template' => $nama,
                 'perihal_default' => $perihal,
                 'isi_template' => "Nomor   : -\nTanggal : {tanggal}\nPerihal : {perihal}\n\n" . $pembuka . "\n" . $isi . $penutup,
+                'path_kop' => 'public/kop-ukwk.jpeg',
+                'nama_file_template' => 'Kop-Surat-UKWK.docx',
+                'path_file_template' => 'public/kop-ukwk.docx',
             ]);
         }
 

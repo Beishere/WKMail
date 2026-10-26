@@ -201,13 +201,25 @@ class SuratController extends Controller
 
     public function kop(TemplateSurat $template)
     {
+        if ($template->path_kop && str_starts_with($template->path_kop, 'public/')) {
+            $full = public_path(substr($template->path_kop, 7));
+            abort_unless(is_file($full), 404);
+            return response()->file($full);
+        }
+
         abort_unless($template->path_kop && Storage::disk('local')->exists($template->path_kop), 404);
 
         return Storage::disk('local')->response($template->path_kop);
     }
 
-    public function unduhTemplate(TemplateSurat $template): StreamedResponse
+    public function unduhTemplate(TemplateSurat $template)
     {
+        if ($template->path_file_template && str_starts_with($template->path_file_template, 'public/')) {
+            $full = public_path(substr($template->path_file_template, 7));
+            abort_unless(is_file($full), 404);
+            return response()->download($full, $template->nama_file_template ?? 'Kop-Surat-UKWK.docx');
+        }
+
         abort_unless($template->path_file_template && Storage::disk('local')->exists($template->path_file_template), 404);
 
         return Storage::disk('local')->download($template->path_file_template, $template->nama_file_template ?? 'template-surat.docx');
