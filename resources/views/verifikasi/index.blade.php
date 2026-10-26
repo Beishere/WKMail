@@ -4,25 +4,25 @@
 ])
 
 @section('content')
-    <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
-        <div class="flex rounded-xl bg-white p-1 shadow-xs ring-1 ring-slate-200 text-xs font-semibold">
+    <div class="mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div class="flex flex-wrap rounded-xl bg-white p-1 shadow-sm ring-1 ring-slate-200 text-xs font-semibold gap-1">
             <a href="{{ route('verifikasi.index', ['tab' => 'antrian']) }}"
-               class="rounded-lg px-3.5 py-2 {{ $tab === 'antrian' ? 'bg-brand-600 text-white' : 'text-slate-600 hover:bg-slate-50' }}">
+               class="rounded-lg px-3 py-1.5 {{ $tab === 'antrian' ? 'bg-brand-600 text-white' : 'text-slate-600 hover:bg-slate-50' }}">
                 Antrian Validasi ({{ $jumlah['antrian'] }})
             </a>
             <a href="{{ route('verifikasi.index', ['tab' => 'revisi']) }}"
-               class="rounded-lg px-3.5 py-2 {{ $tab === 'revisi' ? 'bg-rose-600 text-white' : 'text-slate-600 hover:bg-slate-50' }}">
+               class="rounded-lg px-3 py-1.5 {{ $tab === 'revisi' ? 'bg-rose-600 text-white' : 'text-slate-600 hover:bg-slate-50' }}">
                 Perlu Revisi ({{ $jumlah['revisi'] }})
             </a>
             <a href="{{ route('verifikasi.index', ['tab' => 'tervalidasi']) }}"
-               class="rounded-lg px-3.5 py-2 {{ $tab === 'tervalidasi' ? 'bg-brand-600 text-white' : 'text-slate-600 hover:bg-slate-50' }}">
+               class="rounded-lg px-3 py-1.5 {{ $tab === 'tervalidasi' ? 'bg-brand-600 text-white' : 'text-slate-600 hover:bg-slate-50' }}">
                 Telah Divalidasi
             </a>
         </div>
 
-        <form method="GET" action="{{ route('verifikasi.index') }}" class="flex items-center gap-2">
+        <form method="GET" action="{{ route('verifikasi.index') }}" class="flex items-center gap-2 w-full sm:w-auto">
             <input type="hidden" name="tab" value="{{ $tab }}">
-            <input type="text" name="q" value="{{ request('q') }}" placeholder="Cari surat..." class="form-input py-1.5 text-xs">
+            <input type="text" name="q" value="{{ request('q') }}" placeholder="Cari surat..." class="form-input flex-1 sm:w-56">
             <button type="submit" class="btn-secondary btn-sm">Cari</button>
         </form>
     </div>

@@ -66,8 +66,8 @@
                     @method('PUT')
                 @endif
 
-                <div class="grid grid-cols-1 gap-3 sm:grid-cols-12">
-                    <div class="sm:col-span-5">
+                <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-12">
+                    <div class="sm:col-span-2 lg:col-span-5">
                         <label class="form-label">Template & Kop Surat Otomatis</label>
                         <select name="id_template" @change="pilihTemplate($event)" class="form-input">
                             <option value="">— Pilih Template Isi Otomatis —</option>
@@ -79,20 +79,20 @@
                         </select>
                     </div>
 
-                    <div class="sm:col-span-3">
+                    <div class="lg:col-span-3">
                         <label class="form-label">Nomor Surat</label>
                         <input type="text" name="nomor_surat" value="{{ old('nomor_surat', $surat->nomor_surat) }}"
                                placeholder="Otomatis jika kosong" class="form-input">
                     </div>
 
-                    <div class="sm:col-span-2">
+                    <div class="lg:col-span-2">
                         <label class="form-label">Tanggal Surat <span class="text-rose-600">*</span></label>
                         <input type="date" name="tanggal_surat"
                                value="{{ old('tanggal_surat', $surat->tanggal_surat?->format('Y-m-d') ?? now()->toDateString()) }}"
                                required class="form-input">
                     </div>
 
-                    <div class="sm:col-span-2">
+                    <div class="lg:col-span-2">
                         <label class="form-label">Sifat Surat <span class="text-rose-600">*</span></label>
                         <select name="sifat_surat" required class="form-input">
                             <option value="Biasa" @selected(old('sifat_surat', $surat->sifat_surat) === 'Biasa')>Biasa</option>
@@ -101,15 +101,15 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 gap-3 sm:grid-cols-12">
-                    <div class="sm:col-span-8">
+                <div class="grid grid-cols-1 gap-3 lg:grid-cols-12">
+                    <div class="lg:col-span-8">
                         <label class="form-label">Perihal Surat <span class="text-rose-600">*</span></label>
                         <input x-ref="perihal" type="text" name="perihal"
                                value="{{ old('perihal', $surat->perihal) }}" required
                                placeholder="Contoh: Permohonan Izin Pelaksanaan Seminar Nasional" class="form-input">
                     </div>
 
-                    <div class="sm:col-span-4">
+                    <div class="lg:col-span-4">
                         <label class="form-label">Pengirim & Unit Asal</label>
                         <input type="text" disabled
                                value="{{ auth()->user()->nama }} ({{ auth()->user()->unit?->nama_unit ?? '-' }})"

@@ -8,37 +8,39 @@
 ])
 
 @section('content')
-    <!-- Compact Role-Themed Banner -->
-    <div class="mb-3 rounded-xl {{ $theme['banner_bg'] }} px-4 py-2.5 text-white shadow-sm flex flex-wrap items-center justify-between gap-2">
-        <div class="flex items-center gap-2.5 min-w-0">
-            <span class="rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider ring-1 shrink-0 {{ $theme['level_badge'] }}">
-                {{ $theme['level'] }}
-            </span>
-            <p class="text-xs font-bold truncate">{{ $user->nama }}</p>
-            <span class="hidden text-[11px] text-white/80 lg:inline truncate">• {{ $user->unit?->nama_unit }}</span>
+    <!-- Responsive Role-Themed Banner -->
+    <div class="mb-3.5 rounded-xl {{ $theme['banner_bg'] }} px-4 py-3 text-white shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div class="min-w-0 space-y-1">
+            <div class="flex flex-wrap items-center gap-2">
+                <span class="rounded-full px-2.5 py-0.5 text-[11px] font-bold ring-1 {{ $theme['level_badge'] }}">
+                    {{ $theme['level'] }}
+                </span>
+                <span class="text-xs text-white/85 font-medium">{{ $user->unit?->nama_unit }}</span>
+            </div>
+            <p class="text-sm sm:text-base font-bold leading-snug break-words">Selamat datang, {{ $user->nama }}</p>
         </div>
-        <div class="flex items-center gap-1.5">
-            <a href="{{ route('surat.create') }}" class="btn-sm rounded-lg bg-[#ed6623] px-2.5 py-1 text-[11px] font-bold text-white shadow-sm ring-1 ring-white/30 hover:bg-[#d95316]">
+        <div class="flex flex-wrap items-center gap-2 shrink-0">
+            <a href="{{ route('surat.create') }}" class="btn-sm rounded-lg bg-[#ed6623] px-3 py-1.5 text-xs font-bold text-white shadow-sm ring-1 ring-white/30 hover:bg-[#d95316]">
                 + Buat Surat
             </a>
             @if($user->isAdmin())
-                <a href="{{ route('verifikasi.index') }}" class="btn-sm rounded-lg bg-white/15 px-2.5 py-1 text-[11px] font-semibold text-white hover:bg-white/25">
+                <a href="{{ route('verifikasi.index') }}" class="btn-sm rounded-lg bg-white/15 px-3 py-1.5 text-xs font-semibold text-white hover:bg-white/25">
                     Antrian Validasi
                 </a>
             @elseif($user->isRektor())
-                <a href="{{ route('rektor.index') }}" class="btn-sm rounded-lg bg-white/15 px-2.5 py-1 text-[11px] font-semibold text-white hover:bg-white/25">
+                <a href="{{ route('rektor.index') }}" class="btn-sm rounded-lg bg-white/15 px-3 py-1.5 text-xs font-semibold text-white hover:bg-white/25">
                     Disposisi Rektor
                 </a>
             @elseif($user->isWakilRektor() || $user->isUnitTeknis())
-                <a href="{{ route('disposisi.index') }}" class="btn-sm rounded-lg bg-white/15 px-2.5 py-1 text-[11px] font-semibold text-white hover:bg-white/25">
+                <a href="{{ route('disposisi.index') }}" class="btn-sm rounded-lg bg-white/15 px-3 py-1.5 text-xs font-semibold text-white hover:bg-white/25">
                     Disposisi Masuk
                 </a>
             @endif
         </div>
     </div>
 
-    <!-- Compact Stats Cards with Role Accent Border -->
-    <div class="grid grid-cols-2 gap-3 lg:grid-cols-4 mb-3">
+    <!-- Responsive Stats Cards with Role Accent Border -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-3.5">
         @php
             $colorMap = [
                 'sky' => 'bg-sky-50 text-sky-600 ring-sky-500/20',
@@ -52,12 +54,12 @@
             ];
         @endphp
         @foreach($stats as $st)
-            <div class="card {{ $theme['stat_border'] }} px-3.5 py-2.5 flex items-center justify-between">
-                <div>
-                    <p class="text-[11px] font-medium text-slate-500">{{ $st['label'] }}</p>
-                    <p class="text-xl font-bold text-slate-900 leading-tight">{{ $st['value'] }}</p>
+            <div class="card {{ $theme['stat_border'] }} px-4 py-3 flex items-center justify-between gap-3">
+                <div class="min-w-0">
+                    <p class="text-xs font-medium text-slate-500 leading-snug">{{ $st['label'] }}</p>
+                    <p class="mt-0.5 text-xl sm:text-2xl font-extrabold text-slate-900 leading-tight">{{ $st['value'] }}</p>
                 </div>
-                <div class="flex h-8 w-8 items-center justify-center rounded-lg ring-1 {{ $colorMap[$st['color']] ?? $colorMap['brand'] }}">
+                <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ring-1 {{ $colorMap[$st['color']] ?? $colorMap['brand'] }}">
                     <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
                     </svg>
@@ -66,15 +68,15 @@
         @endforeach
     </div>
 
-    <!-- Main 1-Screen Grid -->
-    <div class="grid grid-cols-1 gap-3 lg:grid-cols-12">
+    <!-- Main Grid -->
+    <div class="grid grid-cols-1 gap-3.5 xl:grid-cols-12">
         <!-- Left 8 cols: Priority Queue Table -->
-        <div class="lg:col-span-8">
+        <div class="xl:col-span-8">
             @if(isset($disposisiAktif))
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title">Disposisi Aktif Unit Anda</h3>
-                        <a href="{{ route('disposisi.index') }}" class="text-[11px] font-semibold text-brand-600 hover:underline">Lihat Semua →</a>
+                        <a href="{{ route('disposisi.index') }}" class="text-xs font-semibold text-brand-600 hover:underline">Lihat Semua →</a>
                     </div>
                     <div class="table-wrap">
                         <table class="table">
@@ -85,25 +87,27 @@
                                 <th>Instruksi</th>
                                 <th>Batas Waktu</th>
                                 <th>Status</th>
-                                <th></th>
+                                <th class="text-right">Aksi</th>
                             </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-100">
                             @forelse($disposisiAktif as $d)
                                 <tr>
-                                    <td class="whitespace-normal max-w-xs">
-                                        <div class="flex items-center gap-1">
+                                    <td class="min-w-[200px] max-w-xs">
+                                        <div class="flex flex-wrap items-center gap-1.5">
                                             <x-sifat-badge :sifat="$d->surat->sifat_surat" />
                                             <span class="font-mono text-[11px] text-slate-500">{{ $d->surat->nomor_surat }}</span>
                                         </div>
-                                        <p class="font-semibold text-slate-800 truncate">{{ $d->surat->perihal }}</p>
+                                        <a href="{{ route('surat.show', $d->id_surat) }}" class="mt-0.5 block font-semibold text-slate-800 hover:text-brand-600 leading-snug">
+                                            {{ $d->surat->perihal }}
+                                        </a>
                                     </td>
-                                    <td>
-                                        <p class="font-medium text-slate-800">{{ $d->pemberi?->nama }}</p>
-                                        <p class="text-[10px] text-slate-400">{{ $d->tanggal_disposisi?->format('d/m/Y') }}</p>
+                                    <td class="min-w-[140px]">
+                                        <p class="font-medium text-slate-800 leading-snug">{{ $d->pemberi?->nama }}</p>
+                                        <p class="text-[11px] text-slate-400">{{ $d->tanggal_disposisi?->format('d/m/Y') }}</p>
                                     </td>
-                                    <td class="whitespace-normal max-w-xs text-slate-600">{{ \Illuminate\Support\Str::limit($d->instruksi, 55) }}</td>
-                                    <td>
+                                    <td class="min-w-[160px] max-w-xs text-slate-600 leading-snug">{{ \Illuminate\Support\Str::limit($d->instruksi, 70) }}</td>
+                                    <td class="whitespace-nowrap">
                                         @if($d->batas_waktu)
                                             <span class="{{ $d->terlambat ? 'font-bold text-rose-600' : 'text-slate-600' }}">
                                                 {{ $d->batas_waktu->format('d/m/Y') }}
@@ -113,13 +117,13 @@
                                         @endif
                                     </td>
                                     <td><x-status-badge :status="$d->status" /></td>
-                                    <td class="text-right">
+                                    <td class="text-right whitespace-nowrap">
                                         <a href="{{ route('surat.show', $d->id_surat) }}" class="btn-primary btn-sm">Proses</a>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="py-6 text-center text-slate-400">Tidak ada disposisi aktif.</td>
+                                    <td colspan="6" class="py-8 text-center text-slate-400">Tidak ada disposisi aktif.</td>
                                 </tr>
                             @endforelse
                             </tbody>
@@ -130,7 +134,7 @@
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title">{{ $antrianJudul ?? 'Daftar Surat' }}</h3>
-                        <a href="{{ route('surat.index') }}" class="text-[11px] font-semibold text-brand-600 hover:underline">Lihat Semua →</a>
+                        <a href="{{ route('surat.index') }}" class="text-xs font-semibold text-brand-600 hover:underline">Lihat Semua →</a>
                     </div>
                     <div class="table-wrap">
                         <table class="table">
@@ -146,18 +150,20 @@
                             <tbody class="divide-y divide-slate-100">
                             @forelse($antrian as $s)
                                 <tr>
-                                    <td class="whitespace-normal max-w-xs">
-                                        <div class="flex items-center gap-1">
+                                    <td class="min-w-[200px] max-w-xs">
+                                        <div class="flex flex-wrap items-center gap-1.5">
                                             <x-sifat-badge :sifat="$s->sifat_surat" />
                                             <span class="font-mono text-[11px] text-slate-500">{{ $s->nomor_surat }}</span>
                                         </div>
-                                        <p class="font-semibold text-slate-800 truncate">{{ $s->perihal }}</p>
+                                        <a href="{{ route('surat.show', $s) }}" class="mt-0.5 block font-semibold text-slate-800 hover:text-brand-600 leading-snug">
+                                            {{ $s->perihal }}
+                                        </a>
                                     </td>
-                                    <td>
-                                        <p class="font-medium text-slate-800 leading-tight">{{ $s->pengirim?->nama }}</p>
-                                        <p class="text-[10px] text-slate-400">{{ $s->pengirim?->unit?->nama_unit }}</p>
+                                    <td class="min-w-[150px]">
+                                        <p class="font-medium text-slate-800 leading-snug">{{ $s->pengirim?->nama }}</p>
+                                        <p class="text-[11px] text-slate-400 leading-snug">{{ $s->pengirim?->unit?->nama_unit }}</p>
                                     </td>
-                                    <td>
+                                    <td class="whitespace-nowrap">
                                         @if($s->kode_klasifikasi)
                                             <span class="badge bg-slate-100 text-slate-700 ring-slate-400/20 font-mono">{{ $s->kode_klasifikasi }}</span>
                                         @else
@@ -165,21 +171,23 @@
                                         @endif
                                     </td>
                                     <td><x-status-badge :status="$s->status_terkini" /></td>
-                                    <td class="text-right space-x-1">
-                                        <a href="{{ route('surat.show', $s) }}" class="btn-secondary btn-sm">Buka</a>
-                                        @if($user->isAdmin() || $user->isRektor() || $s->id_pengirim === $user->id_pengguna)
-                                            <form method="POST" action="{{ route('surat.destroy', $s) }}" class="inline"
-                                                  onsubmit="return confirm('Hapus surat {{ $s->nomor_surat }}?')">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn-danger btn-sm">Hapus</button>
-                                            </form>
-                                        @endif
+                                    <td class="text-right">
+                                        <div class="inline-flex flex-wrap items-center justify-end gap-1.5">
+                                            <a href="{{ route('surat.show', $s) }}" class="btn-secondary btn-sm">Buka</a>
+                                            @if($user->isAdmin() || $user->isRektor() || $s->id_pengirim === $user->id_pengguna)
+                                                <form method="POST" action="{{ route('surat.destroy', $s) }}" class="inline"
+                                                      onsubmit="return confirm('Hapus surat {{ $s->nomor_surat }}?')">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn-danger btn-sm">Hapus</button>
+                                                </form>
+                                            @endif
+                                        </div>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5" class="py-6 text-center text-slate-400">Tidak ada surat pada daftar ini.</td>
+                                    <td colspan="5" class="py-8 text-center text-slate-400">Tidak ada surat pada daftar ini.</td>
                                 </tr>
                             @endforelse
                             </tbody>
@@ -190,7 +198,7 @@
         </div>
 
         <!-- Right 4 cols: Compact Tabbed Panel (Aktivitas / Statistik / Tren) -->
-        <div class="lg:col-span-4" x-data="{ rtab: 'aktivitas' }">
+        <div class="xl:col-span-4" x-data="{ rtab: 'aktivitas' }">
             <div class="card">
                 <div class="card-header">
                     <div class="flex rounded-lg bg-slate-100 p-0.5 text-[11px] font-semibold w-full">

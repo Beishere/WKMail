@@ -27,26 +27,26 @@
         </div>
     @endif
 
-    <div class="grid grid-cols-1 gap-3.5 lg:grid-cols-12">
+    <div class="grid grid-cols-1 gap-3.5 xl:grid-cols-12">
         <!-- Left 7 cols: Informasi Surat, Isi, Lampiran, Pohon Disposisi (Tabbed) -->
-        <div class="lg:col-span-7" x-data="{ tabLeft: 'isi' }">
+        <div class="xl:col-span-7" x-data="{ tabLeft: 'isi' }">
             <div class="card">
                 <div class="card-header">
-                    <div class="min-w-0">
-                        <div class="flex items-center gap-2">
-                            <span class="font-mono text-[11px] text-slate-500">{{ $surat->nomor_surat }}</span>
+                    <div class="min-w-0 flex-1">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="font-mono text-xs text-slate-500">{{ $surat->nomor_surat }}</span>
                             <x-status-badge :status="$surat->status_terkini" />
                         </div>
-                        <h2 class="text-sm font-bold text-slate-900 truncate">{{ $surat->perihal }}</h2>
+                        <h2 class="mt-0.5 text-sm sm:text-base font-bold text-slate-900 leading-snug break-words">{{ $surat->perihal }}</h2>
                     </div>
                     <div class="no-print flex flex-wrap items-center gap-1.5">
-                        <div class="flex rounded-lg bg-slate-100 p-0.5 text-[11px] font-semibold mr-1">
+                        <div class="flex rounded-lg bg-slate-100 p-0.5 text-xs font-semibold mr-1">
                             <button type="button" @click="tabLeft = 'isi'"
-                                    :class="tabLeft === 'isi' ? 'bg-white text-brand-700 shadow-2xs' : 'text-slate-500'"
-                                    class="rounded-md px-2 py-1">Isi & Lampiran</button>
+                                    :class="tabLeft === 'isi' ? 'bg-white text-brand-700 shadow-sm' : 'text-slate-500'"
+                                    class="rounded-md px-2.5 py-1">Isi & Lampiran</button>
                             <button type="button" @click="tabLeft = 'disposisi'"
-                                    :class="tabLeft === 'disposisi' ? 'bg-white text-brand-700 shadow-2xs' : 'text-slate-500'"
-                                    class="rounded-md px-2 py-1">Rantai Disposisi ({{ $pohonDisposisi->count() }})</button>
+                                    :class="tabLeft === 'disposisi' ? 'bg-white text-brand-700 shadow-sm' : 'text-slate-500'"
+                                    class="rounded-md px-2.5 py-1">Rantai Disposisi ({{ $pohonDisposisi->count() }})</button>
                         </div>
                         @if($user->isAdmin() || $user->isRektor() || $user->id_pengguna === $surat->id_pengirim)
                             <a href="{{ route('surat.edit', $surat) }}" class="btn-secondary btn-sm">Edit</a>
@@ -64,40 +64,40 @@
 
                 <!-- Tab 1: Info, Isi & Lampiran -->
                 <div x-show="tabLeft === 'isi'" class="card-body space-y-3">
-                    <dl class="grid grid-cols-2 gap-2 sm:grid-cols-4 text-[11px]">
-                        <div class="rounded-lg bg-slate-50 p-2">
-                            <dt class="text-slate-400">Pengirim</dt>
-                            <dd class="font-semibold text-slate-800 truncate">{{ $surat->pengirim?->nama }}</dd>
-                            <dd class="text-slate-500 truncate">{{ $surat->pengirim?->unit?->nama_unit ?? '-' }}</dd>
+                    <dl class="grid grid-cols-1 gap-2.5 sm:grid-cols-2 text-xs">
+                        <div class="rounded-lg bg-slate-50 p-2.5">
+                            <dt class="text-[11px] font-medium text-slate-400">Pengirim Surat</dt>
+                            <dd class="mt-0.5 font-semibold text-slate-800 leading-snug break-words">{{ $surat->pengirim?->nama }}</dd>
+                            <dd class="text-slate-500 leading-snug break-words">{{ $surat->pengirim?->unit?->nama_unit ?? '-' }}</dd>
                         </div>
-                        <div class="rounded-lg bg-slate-50 p-2">
-                            <dt class="text-slate-400">Tgl Surat / Validasi</dt>
-                            <dd class="font-semibold text-slate-800">{{ $surat->tanggal_surat?->format('d/m/Y') }}</dd>
-                            <dd class="text-slate-500 truncate">
-                                {{ $surat->tanggal_diterima ? $surat->tanggal_diterima->format('d/m/Y H:i') : 'Menunggu validasi' }}
+                        <div class="rounded-lg bg-slate-50 p-2.5">
+                            <dt class="text-[11px] font-medium text-slate-400">Tgl Surat / Validasi Rektorat</dt>
+                            <dd class="mt-0.5 font-semibold text-slate-800">{{ $surat->tanggal_surat?->format('d/m/Y') }}</dd>
+                            <dd class="text-slate-500 leading-snug">
+                                Diterima: {{ $surat->tanggal_diterima ? $surat->tanggal_diterima->format('d/m/Y H:i') : 'Menunggu validasi' }}
                             </dd>
                         </div>
-                        <div class="rounded-lg bg-slate-50 p-2">
-                            <dt class="text-slate-400">Kode Sumber</dt>
-                            <dd class="font-semibold text-slate-800 truncate">
+                        <div class="rounded-lg bg-slate-50 p-2.5">
+                            <dt class="text-[11px] font-medium text-slate-400">Klasifikasi Kode Sumber</dt>
+                            <dd class="mt-0.5 font-semibold text-slate-800 leading-snug">
                                 @if($surat->kode_sumber)
-                                    Kode {{ $surat->kode_sumber }} ({{ $surat->kategoriSumber?->nama_kategori }})
+                                    Kode {{ $surat->kode_sumber }} — {{ $surat->kategoriSumber?->nama_kategori }}
                                 @else
                                     <span class="text-slate-400">Belum diklasifikasi</span>
                                 @endif
                             </dd>
                         </div>
-                        <div class="rounded-lg bg-slate-50 p-2">
-                            <dt class="text-slate-400">Kode Bidang</dt>
-                            <dd class="font-semibold text-slate-800 truncate">
+                        <div class="rounded-lg bg-slate-50 p-2.5">
+                            <dt class="text-[11px] font-medium text-slate-400">Klasifikasi Kode Bidang</dt>
+                            <dd class="mt-0.5 font-semibold text-slate-800 leading-snug">
                                 @if($surat->kode_bidang)
-                                    Kode {{ $surat->kode_bidang }} ({{ $surat->bidang?->nama_bidang }})
+                                    Kode {{ $surat->kode_bidang }} — {{ $surat->bidang?->nama_bidang }}
                                 @else
                                     <span class="text-slate-400">Belum diklasifikasi</span>
                                 @endif
                             </dd>
                             @if($surat->unitSaran)
-                                <dd class="text-brand-600 font-medium truncate">→ {{ $surat->unitSaran->nama_unit }}</dd>
+                                <dd class="mt-0.5 text-brand-600 font-medium leading-snug">→ {{ $surat->unitSaran->nama_unit }}</dd>
                             @endif
                         </div>
                     </dl>
@@ -222,7 +222,7 @@
         </div>
 
         <!-- Right 5 cols: Panel Tindakan Sesuai Peran + Riwayat Status -->
-        <div class="lg:col-span-5 space-y-3">
+        <div class="xl:col-span-5 space-y-3.5">
 
             {{-- ============================================================ 1. PANEL ADMIN REKTORAT --}}
             @if($user->isAdmin() && $surat->status_terkini === \App\Models\Surat::TERKIRIM)

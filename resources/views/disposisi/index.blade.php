@@ -6,10 +6,10 @@
 ])
 
 @section('content')
-    <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
-        <div class="flex rounded-xl bg-white p-1 shadow-xs ring-1 ring-slate-200 text-xs font-semibold">
+    <div class="mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div class="flex flex-wrap rounded-xl bg-white p-1 shadow-sm ring-1 ring-slate-200 text-xs font-semibold gap-1">
             <a href="{{ route('disposisi.index', ['tab' => 'aktif']) }}"
-               class="rounded-lg px-3.5 py-2 {{ $tab === 'aktif' ? 'bg-brand-600 text-white' : 'text-slate-600 hover:bg-slate-50' }}">
+               class="rounded-lg px-3 py-1.5 {{ $tab === 'aktif' ? 'bg-brand-600 text-white' : 'text-slate-600 hover:bg-slate-50' }}">
                 Perlu Tindak Lanjut
                 @if($jumlahBaru > 0)
                     <span class="ml-1 rounded-full bg-rose-500 px-1.5 py-0.5 text-[10px] text-white">{{ $jumlahBaru }} baru</span>
@@ -17,19 +17,19 @@
             </a>
             @if(auth()->user()->isWakilRektor())
                 <a href="{{ route('disposisi.index', ['tab' => 'diteruskan']) }}"
-                   class="rounded-lg px-3.5 py-2 {{ $tab === 'diteruskan' ? 'bg-brand-600 text-white' : 'text-slate-600 hover:bg-slate-50' }}">
+                   class="rounded-lg px-3 py-1.5 {{ $tab === 'diteruskan' ? 'bg-brand-600 text-white' : 'text-slate-600 hover:bg-slate-50' }}">
                     Telah Diteruskan ke Unit Teknis
                 </a>
             @endif
             <a href="{{ route('disposisi.index', ['tab' => 'selesai']) }}"
-               class="rounded-lg px-3.5 py-2 {{ $tab === 'selesai' ? 'bg-brand-600 text-white' : 'text-slate-600 hover:bg-slate-50' }}">
+               class="rounded-lg px-3 py-1.5 {{ $tab === 'selesai' ? 'bg-brand-600 text-white' : 'text-slate-600 hover:bg-slate-50' }}">
                 Selesai
             </a>
         </div>
 
-        <form method="GET" action="{{ route('disposisi.index') }}" class="flex items-center gap-2">
+        <form method="GET" action="{{ route('disposisi.index') }}" class="flex items-center gap-2 w-full sm:w-auto">
             <input type="hidden" name="tab" value="{{ $tab }}">
-            <input type="text" name="q" value="{{ request('q') }}" placeholder="Cari surat..." class="form-input py-1.5 text-xs">
+            <input type="text" name="q" value="{{ request('q') }}" placeholder="Cari surat..." class="form-input flex-1 sm:w-56">
             <button type="submit" class="btn-secondary btn-sm">Cari</button>
         </form>
     </div>

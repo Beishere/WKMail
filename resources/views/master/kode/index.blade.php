@@ -5,15 +5,15 @@
 ])
 
 @section('content')
-    <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
-        <div class="flex rounded-xl bg-white p-1 shadow-xs ring-1 ring-slate-200 text-xs font-semibold">
+    <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex flex-wrap rounded-xl bg-white p-1 shadow-sm ring-1 ring-slate-200 text-xs font-semibold gap-1">
             <a href="{{ route('master.kategori-sumber.index') }}"
-               class="rounded-lg px-3.5 py-2 {{ $isKategori ? 'bg-brand-600 text-white' : 'text-slate-600 hover:bg-slate-50' }}">
+               class="rounded-lg px-3 py-1.5 {{ $isKategori ? 'bg-brand-600 text-white' : 'text-slate-600 hover:bg-slate-50' }}">
                 Kategori Sumber Surat (A / B / C)
             </a>
             <a href="{{ route('master.kode-bidang.index') }}"
-               class="rounded-lg px-3.5 py-2 {{ ! $isKategori ? 'bg-brand-600 text-white' : 'text-slate-600 hover:bg-slate-50' }}">
-                Kode Bidang Departemen (B, C, D, G, Q)
+               class="rounded-lg px-3 py-1.5 {{ ! $isKategori ? 'bg-brand-600 text-white' : 'text-slate-600 hover:bg-slate-50' }}">
+                Kode Bidang Departemen (B, C, D, G, Q, K)
             </a>
         </div>
 

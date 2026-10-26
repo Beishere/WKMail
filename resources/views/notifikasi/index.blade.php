@@ -24,17 +24,17 @@
 
     <div class="card divide-y divide-slate-100">
         @forelse($notifikasi as $n)
-            <div class="flex items-center justify-between gap-4 px-5 py-4 {{ ! $n->sudah_dibaca ? 'bg-brand-50/40' : '' }}">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-4 py-3.5 {{ ! $n->sudah_dibaca ? 'bg-brand-50/40' : '' }}">
                 <div class="min-w-0">
-                    <div class="flex items-center gap-2">
+                    <div class="flex items-start gap-2">
                         @if(! $n->sudah_dibaca)
-                            <span class="h-2 w-2 rounded-full bg-brand-600"></span>
+                            <span class="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-brand-600"></span>
                         @endif
-                        <p class="text-sm {{ ! $n->sudah_dibaca ? 'font-semibold text-slate-900' : 'text-slate-700' }}">{{ $n->pesan }}</p>
+                        <p class="text-xs sm:text-sm leading-snug break-words {{ ! $n->sudah_dibaca ? 'font-semibold text-slate-900' : 'text-slate-700' }}">{{ $n->pesan }}</p>
                     </div>
                     <p class="mt-1 text-xs text-slate-400">{{ $n->waktu?->translatedFormat('d F Y H:i') }} ({{ $n->waktu?->diffForHumans() }})</p>
                 </div>
-                <a href="{{ route('notifikasi.buka', $n) }}" class="btn-secondary btn-sm shrink-0">Buka Surat</a>
+                <a href="{{ route('notifikasi.buka', $n) }}" class="btn-secondary btn-sm self-start sm:self-center shrink-0">Buka Surat</a>
             </div>
         @empty
             <div class="py-12 text-center text-sm text-slate-400">Tidak ada notifikasi.</div>

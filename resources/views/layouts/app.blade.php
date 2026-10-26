@@ -10,40 +10,49 @@
     <link href="https://fonts.bunny.net/css?family=plus-jakarta-sans:400,500,600,700,800|inter:400,500,600,700&display=swap" rel="stylesheet" />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="h-screen overflow-hidden" x-data="{ sidebarOpen: false }">
+<body class="min-h-screen lg:h-screen lg:overflow-hidden" x-data="{ sidebarOpen: false }">
 @php
     /** @var \App\Models\Pengguna $authUser */
     $authUser = auth()->user();
     $theme = $authUser->theme();
 @endphp
 
-<div class="flex h-screen overflow-hidden">
+<div class="flex min-h-screen lg:h-screen lg:overflow-hidden">
     <!-- Mobile backdrop -->
     <div x-show="sidebarOpen" x-cloak @click="sidebarOpen = false"
          class="fixed inset-0 z-30 bg-slate-900/60 backdrop-blur-xs lg:hidden"></div>
 
-    <!-- Sidebar (fixed 100vh, colored by role & administrative tier) -->
+    <!-- Sidebar (fixed on mobile/tablet drawer, static on lg+ desktop) -->
     <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
-           class="no-print fixed inset-y-0 left-0 z-40 flex w-56 shrink-0 flex-col {{ $theme['sidebar_bg'] }} text-slate-100 transition-transform duration-200 lg:static lg:translate-x-0 shadow-xl">
+           class="no-print fixed inset-y-0 left-0 z-40 flex w-64 shrink-0 flex-col {{ $theme['sidebar_bg'] }} text-slate-100 transition-transform duration-200 lg:static lg:w-60 lg:translate-x-0 shadow-xl">
         <!-- Brand WKMail -->
-        <div class="flex h-12 items-center gap-2.5 border-b border-white/15 px-3.5">
-            <img src="{{ asset('logo-ukwk.png') }}" alt="Logo UKWK" class="h-8 w-8 rounded-lg bg-white p-0.5 object-contain shadow-sm">
-            <div class="leading-tight min-w-0">
-                <div class="flex items-center gap-1.5">
-                    <span class="text-sm font-extrabold tracking-tight text-white">WK<span class="text-[#ff854d]">Mail</span></span>
-                    <span class="rounded bg-[#ed6623]/30 px-1 py-0.2 text-[9px] font-bold text-[#ffb370] ring-1 ring-[#ed6623]/50">UKWK</span>
+        <div class="flex h-14 shrink-0 items-center justify-between gap-2.5 border-b border-white/15 px-4">
+            <div class="flex items-center gap-2.5 min-w-0">
+                <img src="{{ asset('logo-ukwk.png') }}" alt="Logo UKWK" class="h-8 w-8 shrink-0 rounded-lg bg-white p-0.5 object-contain shadow-sm">
+                <div class="leading-tight min-w-0">
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-sm font-extrabold tracking-tight text-white">WK<span class="text-[#ff854d]">Mail</span></span>
+                        <span class="rounded bg-[#ed6623]/30 px-1.5 py-0.5 text-[10px] font-bold text-[#ffb370] ring-1 ring-[#ed6623]/50">UKWK</span>
+                    </div>
+                    <p class="text-[11px] text-white/75 truncate">Scientia ad Laborem</p>
                 </div>
-                <p class="text-[10px] text-white/70 truncate">Scientia ad Laborem</p>
             </div>
+            <button @click="sidebarOpen = false" class="rounded-lg p-1 text-white/70 hover:bg-white/10 hover:text-white lg:hidden">
+                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
         </div>
 
         <!-- User Role & Administrative Level Card -->
-        <div class="mx-2.5 mt-2 rounded-lg bg-black/25 px-2.5 py-2 ring-1 ring-white/15">
-            <span class="inline-block rounded px-1.5 py-0.2 text-[9px] font-bold uppercase tracking-wider ring-1 {{ $theme['level_badge'] }}">
+        <div class="mx-3 mt-2.5 rounded-xl bg-black/25 p-2.5 ring-1 ring-white/15">
+            <span class="inline-block rounded-md px-2 py-0.5 text-[10px] font-bold leading-snug ring-1 {{ $theme['level_badge'] }}">
                 {{ $theme['level'] }}
             </span>
-            <p class="mt-1 text-[11px] font-bold text-white truncate">{{ $authUser->nama }}</p>
-            <p class="text-[10px] text-white/75 font-medium truncate">{{ $authUser->role?->nama_role }} {{ $authUser->unit ? '• ' . $authUser->unit->nama_unit : '' }}</p>
+            <p class="mt-1.5 text-xs font-bold text-white leading-snug break-words">{{ $authUser->nama }}</p>
+            <p class="mt-0.5 text-[11px] text-white/80 font-medium leading-snug break-words">
+                {{ $authUser->role?->nama_role }}{{ $authUser->unit ? ' • ' . $authUser->unit->nama_unit : '' }}
+            </p>
         </div>
 
         <!-- Navigation -->
@@ -188,35 +197,37 @@
         </div>
     </aside>
 
-    <!-- Main Content (scrollable internally, fits 1 screen) -->
-    <div class="flex flex-1 flex-col min-w-0 h-screen overflow-hidden">
-        <!-- Compact Topbar with Role Border Accent -->
-        <header class="no-print flex h-12 shrink-0 items-center justify-between gap-3 {{ $theme['topbar_border'] }} bg-white px-4">
-            <div class="flex items-center gap-2.5 min-w-0">
-                <button @click="sidebarOpen = true" class="rounded-lg p-1.5 text-slate-600 hover:bg-slate-100 lg:hidden">
+    <!-- Main Content (scrollable internally on desktop, natural scroll on mobile) -->
+    <div class="flex flex-1 flex-col min-w-0 lg:h-screen lg:overflow-hidden">
+        <!-- Responsive Topbar with Role Border Accent -->
+        <header class="no-print flex min-h-14 shrink-0 items-center justify-between gap-2 sm:gap-3 {{ $theme['topbar_border'] }} bg-white px-3 py-2 sm:px-5">
+            <div class="flex items-center gap-2.5 min-w-0 flex-1">
+                <button @click="sidebarOpen = true" class="rounded-lg p-1.5 text-slate-600 hover:bg-slate-100 lg:hidden shrink-0">
                     <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
                     </svg>
                 </button>
-                <div class="flex items-center gap-2 truncate">
-                    <h1 class="text-sm font-bold text-slate-800 truncate">{{ $title ?? 'Dashboard' }}</h1>
-                    <span class="hidden sm:inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold ring-1 ring-inset {{ $theme['role_badge'] }}">
-                        {{ $theme['jabatan'] }}
-                    </span>
+                <div class="min-w-0 flex-1">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <h1 class="text-sm sm:text-base font-bold text-slate-900 truncate">{{ $title ?? 'Dashboard' }}</h1>
+                        <span class="hidden md:inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-bold ring-1 ring-inset {{ $theme['role_badge'] }}">
+                            {{ $theme['jabatan'] }}
+                        </span>
+                    </div>
                     @isset($subtitle)
-                        <span class="hidden text-[11px] text-slate-400 xl:inline truncate">— {{ $subtitle }}</span>
+                        <p class="hidden xl:block text-[11px] text-slate-500 truncate">{{ $subtitle }}</p>
                     @endisset
                 </div>
             </div>
 
-            <div class="flex items-center gap-2.5 shrink-0">
+            <div class="flex items-center gap-2 sm:gap-2.5 shrink-0">
                 <!-- Quick Search Tracking -->
                 <form action="{{ route('lacak') }}" method="GET" class="hidden md:block">
                     <div class="relative">
                         <input type="text" name="q" value="{{ request('q') }}"
                                placeholder="Lacak nomor / perihal..."
-                               class="w-52 rounded-lg border-slate-300 py-1 pl-7 pr-2.5 text-xs focus:border-brand-500 focus:ring-brand-500">
-                        <svg class="absolute left-2 top-1.5 h-3.5 w-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                               class="w-44 lg:w-56 rounded-lg border-slate-300 py-1.5 pl-8 pr-2.5 text-xs focus:border-brand-500 focus:ring-brand-500">
+                        <svg class="absolute left-2.5 top-2 h-3.5 w-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
                         </svg>
                     </div>
@@ -225,56 +236,56 @@
                 <!-- Notification Dropdown -->
                 <div class="relative" x-data="{ open: false }">
                     <button @click="open = !open" class="relative rounded-lg p-1.5 text-slate-600 hover:bg-slate-100">
-                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
                         </svg>
                         @if(($notifBelumDibaca ?? 0) > 0)
-                            <span class="absolute right-0.5 top-0.5 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-rose-600 px-1 text-[9px] font-bold text-white">
+                            <span class="absolute right-0.5 top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-600 px-1 text-[10px] font-bold text-white">
                                 {{ $notifBelumDibaca > 9 ? '9+' : $notifBelumDibaca }}
                             </span>
                         @endif
                     </button>
 
                     <div x-show="open" x-cloak @click.outside="open = false"
-                         class="absolute right-0 mt-1.5 w-72 rounded-xl bg-white shadow-lg ring-1 ring-slate-200 z-50">
-                        <div class="flex items-center justify-between border-b border-slate-100 px-3 py-2">
-                            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-600">Notifikasi</span>
+                         class="fixed inset-x-3 top-16 sm:Categories sm:absolute sm:inset-x-auto sm:right-0 sm:top-full sm:mt-1.5 sm:w-80 rounded-xl bg-white shadow-xl ring-1 ring-slate-200 z-50">
+                        <div class="flex items-center justify-between border-b border-slate-100 px-3.5 py-2.5">
+                            <span class="text-xs font-bold uppercase tracking-wider text-slate-700">Notifikasi</span>
                             @if(($notifBelumDibaca ?? 0) > 0)
                                 <form method="POST" action="{{ route('notifikasi.baca-semua') }}">
                                     @csrf
-                                    <button type="submit" class="text-[11px] font-medium text-brand-600 hover:underline">Tandai dibaca</button>
+                                    <button type="submit" class="text-xs font-semibold text-brand-600 hover:underline">Tandai dibaca</button>
                                 </form>
                             @endif
                         </div>
                         <div class="max-h-64 divide-y divide-slate-100 overflow-y-auto">
                             @forelse($notifTerbaru ?? [] as $n)
                                 <a href="{{ route('notifikasi.buka', $n) }}"
-                                   class="block px-3 py-2 text-xs transition hover:bg-slate-50 {{ ! $n->sudah_dibaca ? 'bg-brand-50/50' : '' }}">
-                                    <p class="{{ ! $n->sudah_dibaca ? 'font-semibold text-slate-800' : 'text-slate-600' }}">{{ $n->pesan }}</p>
-                                    <p class="mt-0.5 text-[10px] text-slate-400">{{ $n->waktu?->diffForHumans() }}</p>
+                                   class="block px-3.5 py-2.5 text-xs transition hover:bg-slate-50 {{ ! $n->sudah_dibaca ? 'bg-brand-50/50' : '' }}">
+                                    <p class="{{ ! $n->sudah_dibaca ? 'font-semibold text-slate-800' : 'text-slate-600' }} leading-snug">{{ $n->pesan }}</p>
+                                    <p class="mt-1 text-[11px] text-slate-400">{{ $n->waktu?->diffForHumans() }}</p>
                                 </a>
                             @empty
-                                <p class="px-3 py-4 text-center text-xs text-slate-400">Belum ada notifikasi.</p>
+                                <p class="px-3.5 py-5 text-center text-xs text-slate-400">Belum ada notifikasi.</p>
                             @endforelse
                         </div>
-                        <div class="border-t border-slate-100 px-3 py-2 text-center">
-                            <a href="{{ route('notifikasi.index') }}" class="text-[11px] font-semibold text-brand-600 hover:underline">Lihat semua</a>
+                        <div class="border-t border-slate-100 px-3.5 py-2 text-center">
+                            <a href="{{ route('notifikasi.index') }}" class="text-xs font-semibold text-brand-600 hover:underline">Lihat semua</a>
                         </div>
                     </div>
                 </div>
 
                 <!-- User Pill -->
                 <a href="{{ route('profil.edit') }}" class="flex items-center gap-2 rounded-lg p-1 hover:bg-slate-100">
-                    <span class="flex h-7 w-7 items-center justify-center rounded-full {{ $theme['avatar_bg'] }} text-[11px] font-bold">
+                    <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full {{ $theme['avatar_bg'] }} text-xs font-bold">
                         {{ $authUser->inisial }}
                     </span>
-                    <span class="hidden text-xs font-semibold text-slate-700 sm:inline max-w-[180px] truncate">{{ $authUser->nama }}</span>
+                    <span class="hidden text-xs font-semibold text-slate-700 sm:inline max-w-[150px] xl:max-w-[220px] truncate">{{ $authUser->nama }}</span>
                 </a>
             </div>
         </header>
 
         <!-- Main Body -->
-        <main class="flex-1 overflow-y-auto p-3 sm:p-4">
+        <main class="flex-1 lg:overflow-y-auto p-3 sm:p-4 lg:p-5">
             @if(session('success'))
                 <div class="no-print mb-3 flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs text-emerald-800">
                     <svg class="h-4 w-4 text-emerald-600 shrink-0" viewBox="0 0 20 20" fill="currentColor">
