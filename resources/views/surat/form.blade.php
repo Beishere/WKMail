@@ -63,14 +63,12 @@
                         <p class="form-hint text-brand-600 font-medium" x-show="loadingTpl" x-cloak>Memuat template surat...</p>
                     </div>
 
-                    @if(! $isEdit)
-                        <div>
-                            <label class="form-label">Nomor Surat</label>
-                            <input type="text" name="nomor_surat" value="{{ old('nomor_surat') }}"
-                                   placeholder="Kosongkan untuk nomor otomatis (SRT/YYYY/MM/XXXX)" class="form-input">
-                            <p class="form-hint">Isi jika surat dari unit/instansi Anda telah memiliki nomor resmi.</p>
-                        </div>
-                    @endif
+                    <div>
+                        <label class="form-label">Nomor Surat</label>
+                        <input type="text" name="nomor_surat" value="{{ old('nomor_surat', $surat->nomor_surat) }}"
+                               placeholder="Kosongkan untuk nomor otomatis (SRT/YYYY/MM/XXXX)" class="form-input">
+                        <p class="form-hint">Isi jika surat dari unit/instansi Anda telah memiliki nomor resmi.</p>
+                    </div>
                 </div>
 
                 <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">

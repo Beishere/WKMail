@@ -37,9 +37,19 @@
                         <span class="font-mono text-xs text-slate-500">{{ $surat->nomor_surat }}</span>
                         <h2 class="text-base font-bold text-slate-900">{{ $surat->perihal }}</h2>
                     </div>
-                    <button type="button" onclick="window.print()" class="no-print btn-secondary btn-sm">
-                        Cetak Lembar Disposisi
-                    </button>
+                    <div class="no-print flex flex-wrap items-center gap-2">
+                        @if($user->isAdmin() || ($user->id_pengguna === $surat->id_pengirim && in_array($surat->status_terkini, [\App\Models\Surat::TERKIRIM, \App\Models\Surat::PERLU_REVISI], true)))
+                            <a href="{{ route('surat.edit', $surat) }}" class="btn-secondary btn-sm">Edit Surat</a>
+                            <form method="POST" action="{{ route('surat.destroy', $surat) }}" onsubmit="return confirm('Hapus surat ini beserta seluruh riwayat dan lampirannya?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn-danger btn-sm">Hapus</button>
+                            </form>
+                        @endif
+                        <button type="button" onclick="window.print()" class="btn-secondary btn-sm">
+                            Cetak Lembar Disposisi
+                        </button>
+                    </div>
                 </div>
 
                 <div class="card-body space-y-5">

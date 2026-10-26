@@ -135,6 +135,7 @@ class SuratController extends Controller
         $this->pastikanBisaRevisi($request, $surat);
 
         $data = $request->validate([
+            'nomor_surat' => ['nullable', 'string', 'max:100', Rule::unique('surat', 'nomor_surat')->ignore($surat->id_surat, 'id_surat')],
             'perihal' => ['required', 'string', 'max:255'],
             'isi_surat' => ['nullable', 'string'],
             'tanggal_surat' => ['required', 'date'],
@@ -143,9 +144,26 @@ class SuratController extends Controller
             'lampiran.*' => self::LAMPIRAN_RULES,
         ]);
 
+        if ($request->user()->isAdmin() && $surat->status_terkini !== Surat::PERLU_REVISI) {
+            $surat->update(collect($data)->only(['nomor_surat', 'perihal', 'isi_surat', 'tanggal_surat', 'sifat_surat'])->filter(fn ($v) => $v !== null)->all());
+            return redirect()->route('surat.show', $surat)->with('success', 'Data surat berhasil diperbarui.');
+        }
+
         $this->service->kirimUlang($surat, $request->user(), $data, $request->file('lampiran', []));
 
-        return redirect()->route('surat.show', $surat)->with('success', 'Revisi surat berhasil dikirim ulang ke Rektorat.');
+        return redirect()->route('surat.show', $surat)->with('success', 'Surat berhasil diperbarui dan dikirim ke Rektorat.');
+    }
+
+    public function destroy(Request $request, Surat $surat): RedirectResponse
+    {
+        $this->pastikanBisaRevisi($request, $surat);
+
+        foreach ($surat->semuaLampiran as $lamp) {
+            Storage::disk('local')->delete($lamp->path_file);
+        }
+        $surat->delete();
+
+        return redirect()->route('surat.index')->with('success', 'Surat berhasil dihapus.');
     }
 
     public function hapusLampiran(Request $request, Lampiran $lampiran): RedirectResponse
@@ -180,10 +198,16 @@ class SuratController extends Controller
 
     protected function pastikanBisaRevisi(Request $request, Surat $surat): void
     {
+        $user = $request->user();
+        if ($user->isAdmin()) {
+            return;
+        }
+
         abort_unless(
-            $surat->id_pengirim === $request->user()->id_pengguna && $surat->status_terkini === Surat::PERLU_REVISI,
+            $surat->id_pengirim === $user->id_pengguna
+                && in_array($surat->status_terkini, [Surat::TERKIRIM, Surat::PERLU_REVISI], true),
             403,
-            'Surat hanya dapat direvisi oleh pengirim ketika berstatus Perlu Revisi.'
+            'Surat hanya dapat diubah/dihapus oleh pengirim sebelum divalidasi atau saat berstatus Perlu Revisi.'
         );
     }
 }
