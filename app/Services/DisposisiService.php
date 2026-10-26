@@ -313,7 +313,7 @@ class DisposisiService
     }
 
     /** @param UploadedFile[] $files */
-    protected function simpanLampiran(Surat $surat, array $files, string $jenis = 'lampiran', ?Disposisi $disposisi = null): void
+    public function simpanLampiran(Surat $surat, array $files, string $jenis = 'lampiran', ?Disposisi $disposisi = null): void
     {
         foreach ($files as $file) {
             if (! $file instanceof UploadedFile) {

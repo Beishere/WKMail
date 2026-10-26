@@ -133,4 +133,60 @@ class DisposisiAlurTest extends TestCase
         $this->actingAs($admin)->get(route('master.kategori-sumber.index'))->assertOk();
         $this->actingAs($admin)->get(route('master.kode-bidang.index'))->assertOk();
     }
+
+    public function test_edit_dan_sinkron_surat_via_microsoft_word_docx(): void
+    {
+        Storage::fake('local');
+
+        $pengirim = Pengguna::where('email', 'teknik@widyakarya.ac.id')->firstOrFail();
+        $surat = Surat::create([
+            'nomor_surat' => '098/FT-UKWK/X/2026',
+            'perihal' => 'Permohonan Awal Laboratorium',
+            'isi_surat' => 'Isi awal sebelum diedit di Word.',
+            'tanggal_surat' => now()->toDateString(),
+            'sifat_surat' => 'Biasa',
+            'id_pengirim' => $pengirim->id_pengguna,
+            'status_terkini' => Surat::TERKIRIM,
+        ]);
+
+        // 1. Unduh surat sebagai berkas .docx
+        $resDownload = $this->actingAs($pengirim)->get(route('surat.word', $surat));
+        $resDownload->assertOk();
+
+        // 2. Uji WordSuratService generateDocx & extractFromDocx secara langsung
+        $wordService = app(\App\Services\WordSuratService::class);
+        $docxPath = $wordService->generateDocx([
+            'nomor_surat' => '099/FT-UKWK/X/2026',
+            'tanggal_surat' => '27 Oktober 2026',
+            'sifat_surat' => 'Urgent',
+            'perihal' => 'Permohonan Penggunaan Laboratorium Terpadu (diedit di Word)',
+            'isi_surat' => "Dengan hormat,\nParagraf pertama yang telah diedit di Microsoft Word.\nTerima kasih.",
+        ]);
+
+        $extracted = $wordService->extractFromDocx($docxPath);
+        $this->assertSame('099/FT-UKWK/X/2026', $extracted['nomor_surat']);
+        $this->assertSame('Urgent', $extracted['sifat_surat']);
+        $this->assertSame('Permohonan Penggunaan Laboratorium Terpadu (diedit di Word)', $extracted['perihal']);
+        $this->assertStringContainsString('Paragraf pertama yang telah diedit di Microsoft Word.', $extracted['isi_surat']);
+
+        // 3. Uji endpoint AJAX import-word
+        $uploadedDocx = new UploadedFile(
+            $docxPath,
+            'Surat-Revisi-Word.docx',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            null,
+            true
+        );
+
+        $resImport = $this->actingAs($pengirim)->postJson(route('surat.import-word'), [
+            'file_word' => $uploadedDocx,
+        ]);
+        $resImport->assertOk()
+            ->assertJson([
+                'ok' => true,
+                'perihal' => 'Permohonan Penggunaan Laboratorium Terpadu (diedit di Word)',
+            ]);
+
+        @unlink($docxPath);
+    }
 }

@@ -5,7 +5,7 @@
 
 @extends('layouts.app', [
     'title' => $isEdit ? 'Edit / Revisi Surat' : 'Buat & Kirim Surat Baru',
-    'subtitle' => 'Gunakan template surat untuk menampilkan kop surat serta mengisi perihal dan draf isi surat secara otomatis',
+    'subtitle' => 'Ketik langsung di web, gunakan template otomatis, atau unduh & edit surat di Microsoft Word (.docx)',
 ])
 
 @section('content')
@@ -19,15 +19,18 @@
         <div class="card"
              x-data="{
                 loadingTpl: false,
-                kopUrl: '{{ $initialTpl?->path_kop ? route('template.kop', $initialTpl) : '' }}',
-                fileTplUrl: '{{ $initialTpl?->path_file_template ? route('template.unduh', $initialTpl) : '' }}',
-                fileTplNama: '{{ $initialTpl?->nama_file_template ?? '' }}',
+                importingWord: false,
+                wordStatus: '',
+                wordError: '',
+                kopUrl: '{{ $initialTpl?->path_kop ? route('template.kop', $initialTpl) : asset('kop-ukwk.jpeg') }}',
+                fileTplUrl: '{{ $initialTpl?->path_file_template ? route('template.unduh', $initialTpl) : asset('kop-ukwk.docx') }}',
+                fileTplNama: '{{ $initialTpl?->nama_file_template ?? 'Kop-Surat-UKWK.docx' }}',
                 pilihTemplate(e) {
                     const id = e.target.value;
                     if (!id) {
-                        this.kopUrl = '';
-                        this.fileTplUrl = '';
-                        this.fileTplNama = '';
+                        this.kopUrl = '{{ asset('kop-ukwk.jpeg') }}';
+                        this.fileTplUrl = '{{ asset('kop-ukwk.docx') }}';
+                        this.fileTplNama = 'Kop-Surat-UKWK.docx';
                         return;
                     }
                     this.loadingTpl = true;
@@ -38,21 +41,84 @@
                     .then(data => {
                         this.$refs.perihal.value = data.perihal;
                         this.$refs.isi.value = data.isi;
-                        this.kopUrl = data.kop_url || '';
-                        this.fileTplUrl = data.file_template_url || '';
-                        this.fileTplNama = data.nama_file_template || '';
+                        this.kopUrl = data.kop_url || '{{ asset('kop-ukwk.jpeg') }}';
+                        this.fileTplUrl = data.file_template_url || '{{ asset('kop-ukwk.docx') }}';
+                        this.fileTplNama = data.nama_file_template || 'Kop-Surat-UKWK.docx';
                     })
                     .finally(() => { this.loadingTpl = false; });
+                },
+                unduhDrafWord() {
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = '{{ route('surat.word-draft') }}';
+                    const fields = {
+                        _token: '{{ csrf_token() }}',
+                        nomor_surat: this.$refs.nomor ? this.$refs.nomor.value : '',
+                        tanggal_surat: this.$refs.tanggal ? this.$refs.tanggal.value : '',
+                        sifat_surat: this.$refs.sifat ? this.$refs.sifat.value : 'Biasa',
+                        perihal: this.$refs.perihal ? this.$refs.perihal.value : '',
+                        isi_surat: this.$refs.isi ? this.$refs.isi.value : '',
+                    };
+                    for (const [k, v] of Object.entries(fields)) {
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = k;
+                        input.value = v;
+                        form.appendChild(input);
+                    }
+                    document.body.appendChild(form);
+                    form.submit();
+                    document.body.removeChild(form);
+                },
+                imporDariWord(e) {
+                    const file = e.target.files[0];
+                    if (!file) return;
+                    this.importingWord = true;
+                    this.wordStatus = '';
+                    this.wordError = '';
+
+                    const fd = new FormData();
+                    fd.append('_token', '{{ csrf_token() }}');
+                    fd.append('file_word', file);
+
+                    fetch('{{ route('surat.import-word') }}', {
+                        method: 'POST',
+                        headers: { 'Accept': 'application/json' },
+                        body: fd,
+                    })
+                    .then(async r => {
+                        const data = await r.json();
+                        if (!r.ok || !data.ok) {
+                            throw new Error(data.message || 'Gagal membaca berkas Word (.docx).');
+                        }
+                        if (data.perihal && this.$refs.perihal) {
+                            this.$refs.perihal.value = data.perihal;
+                        }
+                        if (data.nomor_surat && this.$refs.nomor && !this.$refs.nomor.value) {
+                            this.$refs.nomor.value = data.nomor_surat;
+                        }
+                        if (data.sifat_surat && this.$refs.sifat) {
+                            this.$refs.sifat.value = data.sifat_surat;
+                        }
+                        if (typeof data.isi_surat === 'string' && this.$refs.isi) {
+                            this.$refs.isi.value = data.isi_surat;
+                        }
+                        this.wordStatus = `Isi surat berhasil disinkronkan dari berkas Word '${data.nama_file}' dan akan dilampirkan otomatis saat disimpan.`;
+                    })
+                    .catch(err => {
+                        this.wordError = err.message || 'Pastikan berkas berformat Microsoft Word (.docx).';
+                    })
+                    .finally(() => {
+                        this.importingWord = false;
+                    });
                 }
              }">
             <div class="card-header">
-                <div class="flex items-center gap-2">
+                <div class="flex flex-wrap items-center gap-2">
                     <h2 class="card-title">{{ $isEdit ? 'Formulir Edit / Revisi Surat (' . $surat->nomor_surat . ')' : 'Formulir Pengajuan Surat Masuk' }}</h2>
-                    <template x-if="fileTplUrl">
-                        <a :href="fileTplUrl" class="btn-secondary btn-sm text-brand-700">
-                            ↓ Unduh Kop Word (<span x-text="fileTplNama"></span>)
-                        </a>
-                    </template>
+                    <button type="button" @click="unduhDrafWord()" class="btn-secondary btn-sm text-brand-700 border-brand-200 bg-brand-50/60 hover:bg-brand-100/70">
+                        ↓ Edit Surat Ini di Microsoft Word (.docx)
+                    </button>
                 </div>
                 <a href="{{ $isEdit ? route('surat.show', $surat) : route('surat.index') }}" class="btn-secondary btn-sm">Kembali</a>
             </div>
@@ -81,20 +147,20 @@
 
                     <div class="lg:col-span-3">
                         <label class="form-label">Nomor Surat</label>
-                        <input type="text" name="nomor_surat" value="{{ old('nomor_surat', $surat->nomor_surat) }}"
+                        <input x-ref="nomor" type="text" name="nomor_surat" value="{{ old('nomor_surat', $surat->nomor_surat) }}"
                                placeholder="Otomatis jika kosong" class="form-input">
                     </div>
 
                     <div class="lg:col-span-2">
                         <label class="form-label">Tanggal Surat <span class="text-rose-600">*</span></label>
-                        <input type="date" name="tanggal_surat"
+                        <input x-ref="tanggal" type="date" name="tanggal_surat"
                                value="{{ old('tanggal_surat', $surat->tanggal_surat?->format('Y-m-d') ?? now()->toDateString()) }}"
                                required class="form-input">
                     </div>
 
                     <div class="lg:col-span-2">
                         <label class="form-label">Sifat Surat <span class="text-rose-600">*</span></label>
-                        <select name="sifat_surat" required class="form-input">
+                        <select x-ref="sifat" name="sifat_surat" required class="form-input">
                             <option value="Biasa" @selected(old('sifat_surat', $surat->sifat_surat) === 'Biasa')>Biasa</option>
                             <option value="Urgent" @selected(old('sifat_surat', $surat->sifat_surat) === 'Urgent')>Urgent</option>
                         </select>
@@ -117,21 +183,61 @@
                     </div>
                 </div>
 
+                <!-- Panel Integrasi Microsoft Word (.docx) -->
+                <div class="rounded-xl border border-brand-200 bg-brand-50/40 p-3">
+                    <div class="flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between">
+                        <div class="min-w-0">
+                            <p class="text-xs font-bold text-brand-800">
+                                Mode Edit dengan Microsoft Word (.docx) Ber-Kop Resmi UKWK
+                            </p>
+                            <p class="text-[11px] text-slate-600 leading-snug">
+                                1) Klik <span class="font-semibold text-brand-700">Unduh Draf .docx</span> untuk mengedit surat di Microsoft Word →
+                                2) Simpan di Word lalu pilih berkasnya pada tombol <span class="font-semibold text-brand-700">Impor Hasil Edit Word</span> agar isi surat di web otomatis diperbarui.
+                            </p>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-2 shrink-0">
+                            <button type="button" @click="unduhDrafWord()"
+                                    class="btn-secondary btn-sm border-brand-300 bg-white text-brand-700 hover:bg-brand-50">
+                                ↓ 1. Unduh Draf .docx
+                            </button>
+                            <label class="btn-primary btn-sm cursor-pointer">
+                                <span x-show="!importingWord">↑ 2. Impor Hasil Edit Word (.docx)</span>
+                                <span x-show="importingWord" x-cloak>Membaca Word...</span>
+                                <input type="file" name="file_word_edit" accept=".docx" class="hidden" @change="imporDariWord($event)">
+                            </label>
+                        </div>
+                    </div>
+
+                    <template x-if="wordStatus">
+                        <div class="mt-2 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-medium text-emerald-800" x-text="'✓ ' + wordStatus"></div>
+                    </template>
+                    <template x-if="wordError">
+                        <div class="mt-2 rounded-lg border border-rose-200 bg-rose-50 px-3 py-1.5 text-xs font-medium text-rose-800" x-text="'⚠ ' + wordError"></div>
+                    </template>
+                </div>
+
                 <div>
-                    <label class="form-label">Isi / Ringkasan Surat</label>
+                    <div class="mb-1 flex flex-wrap items-center justify-between gap-2">
+                        <label class="form-label mb-0">Isi / Ringkasan Surat (Otomatis Sinkron dengan Word)</label>
+                        <template x-if="fileTplUrl">
+                            <a :href="fileTplUrl" class="text-[11px] font-semibold text-brand-600 hover:underline">
+                                Unduh Kop Kosong (<span x-text="fileTplNama"></span>)
+                            </a>
+                        </template>
+                    </div>
                     <template x-if="kopUrl">
                         <div class="mb-1.5 rounded-t-xl border border-b-0 border-slate-300 bg-white p-2 text-center">
-                            <img :src="kopUrl" alt="Kop Surat" class="mx-auto max-h-20 object-contain">
+                            <img :src="kopUrl" alt="Kop Surat UKWK" class="mx-auto max-h-20 object-contain">
                         </div>
                     </template>
-                    <textarea x-ref="isi" name="isi_surat" rows="6"
-                              placeholder="Tuliskan isi surat atau pilih template di atas..."
+                    <textarea x-ref="isi" name="isi_surat" rows="7"
+                              placeholder="Tuliskan isi surat di sini, pilih template di atas, atau impor dari berkas Microsoft Word (.docx)..."
                               class="form-input font-mono text-xs leading-relaxed">{{ old('isi_surat', $surat->isi_surat) }}</textarea>
                 </div>
 
                 <div class="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-2.5">
                     <div class="flex-1 min-w-[260px]">
-                        <label class="form-label">Unggah Berkas Lampiran (PDF/Word/Excel/Gambar/ZIP, maks. 10 MB)</label>
+                        <label class="form-label">Lampiran Tambahan (PDF/Word/Excel/Gambar/ZIP, maks. 10 MB)</label>
                         <input type="file" name="lampiran[]" multiple
                                accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.jpg,.jpeg,.png,.zip"
                                class="block w-full rounded-lg border border-slate-300 bg-slate-50 p-1.5 text-xs text-slate-700 file:mr-2.5 file:rounded-md file:border-0 file:bg-brand-600 file:px-2.5 file:py-1 file:text-xs file:font-semibold file:text-white hover:file:bg-brand-700">

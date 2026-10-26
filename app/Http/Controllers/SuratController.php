@@ -11,20 +11,26 @@ use App\Models\Surat;
 use App\Models\TemplateSurat;
 use App\Models\Unit;
 use App\Services\DisposisiService;
+use App\Services\WordSuratService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Throwable;
 
 class SuratController extends Controller
 {
     public const LAMPIRAN_RULES = ['file', 'max:10240', 'mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,jpg,jpeg,png,zip'];
 
-    public function __construct(protected DisposisiService $service)
-    {
+    public function __construct(
+        protected DisposisiService $service,
+        protected WordSuratService $wordService,
+    ) {
     }
 
     /** Daftar surat sesuai hak akses (arsip / surat saya). */
@@ -69,11 +75,29 @@ class SuratController extends Controller
             'isi_surat' => ['nullable', 'string'],
             'tanggal_surat' => ['required', 'date'],
             'sifat_surat' => ['required', Rule::in(['Biasa', 'Urgent'])],
+            'file_word_edit' => ['nullable', 'file', 'max:10240', 'mimes:docx'],
             'lampiran' => ['nullable', 'array', 'max:5'],
             'lampiran.*' => self::LAMPIRAN_RULES,
         ]);
 
-        $surat = $this->service->kirimSurat($request->user(), $data, $request->file('lampiran', []));
+        $files = $request->file('lampiran', []);
+        if ($request->hasFile('file_word_edit')) {
+            $wordFile = $request->file('file_word_edit');
+            try {
+                $extracted = $this->wordService->extractFromDocx($wordFile);
+                if (! empty($extracted['isi_surat'])) {
+                    $data['isi_surat'] = $extracted['isi_surat'];
+                }
+                if (! empty($extracted['perihal']) && empty($data['perihal'])) {
+                    $data['perihal'] = $extracted['perihal'];
+                }
+            } catch (Throwable) {
+                // Abaikan jika gagal ekstraksi, berkas tetap disimpan sebagai lampiran
+            }
+            array_unshift($files, $wordFile);
+        }
+
+        $surat = $this->service->kirimSurat($request->user(), $data, $files);
 
         return redirect()->route('surat.show', $surat)
             ->with('success', "Surat berhasil dikirim dengan nomor {$surat->nomor_surat}. Status: Terkirim.");
@@ -140,16 +164,37 @@ class SuratController extends Controller
             'isi_surat' => ['nullable', 'string'],
             'tanggal_surat' => ['required', 'date'],
             'sifat_surat' => ['required', Rule::in(['Biasa', 'Urgent'])],
+            'file_word_edit' => ['nullable', 'file', 'max:10240', 'mimes:docx'],
             'lampiran' => ['nullable', 'array', 'max:5'],
             'lampiran.*' => self::LAMPIRAN_RULES,
         ]);
 
-        if ($request->user()->isAdmin() && $surat->status_terkini !== Surat::PERLU_REVISI) {
-            $surat->update(collect($data)->only(['nomor_surat', 'perihal', 'isi_surat', 'tanggal_surat', 'sifat_surat'])->filter(fn ($v) => $v !== null)->all());
-            return redirect()->route('surat.show', $surat)->with('success', 'Data surat berhasil diperbarui.');
+        $files = $request->file('lampiran', []);
+        if ($request->hasFile('file_word_edit')) {
+            $wordFile = $request->file('file_word_edit');
+            try {
+                $extracted = $this->wordService->extractFromDocx($wordFile);
+                if (! empty($extracted['isi_surat'])) {
+                    $data['isi_surat'] = $extracted['isi_surat'];
+                }
+                if (! empty($extracted['perihal']) && empty($data['perihal'])) {
+                    $data['perihal'] = $extracted['perihal'];
+                }
+            } catch (Throwable) {
+                // Abaikan jika gagal ekstraksi, berkas tetap disimpan sebagai lampiran
+            }
+            array_unshift($files, $wordFile);
         }
 
-        $this->service->kirimUlang($surat, $request->user(), $data, $request->file('lampiran', []));
+        if (($request->user()->isAdmin() || $request->user()->isRektor()) && $surat->status_terkini !== Surat::PERLU_REVISI) {
+            $surat->update(collect($data)->only(['nomor_surat', 'perihal', 'isi_surat', 'tanggal_surat', 'sifat_surat'])->filter(fn ($v) => $v !== null)->all());
+            if (! empty($files)) {
+                $this->service->simpanLampiran($surat, $files);
+            }
+            return redirect()->route('surat.show', $surat)->with('success', 'Data surat & berkas berhasil diperbarui.');
+        }
+
+        $this->service->kirimUlang($surat, $request->user(), $data, $files);
 
         return redirect()->route('surat.show', $surat)->with('success', 'Surat berhasil diperbarui dan dikirim ke Rektorat.');
     }
@@ -252,6 +297,72 @@ class SuratController extends Controller
         abort_unless($template->path_file_template && Storage::disk('local')->exists($template->path_file_template), 404);
 
         return Storage::disk('local')->download($template->path_file_template, $template->nama_file_template ?? 'template-surat.docx');
+    }
+
+    /**
+     * Unduh surat dalam format Microsoft Word (.docx) siap-edit dengan Kop Surat UKWK.
+     */
+    public function unduhWord(Request $request, Surat $surat): BinaryFileResponse
+    {
+        abort_unless($surat->isVisibleTo($request->user()), 403, 'Anda tidak memiliki akses ke surat ini.');
+
+        $tempPath = $this->wordService->generateFromSurat($surat);
+        $safeNomor = Str::slug($surat->nomor_surat ?: 'surat-' . $surat->id_surat, '-');
+        $fileName = 'Surat-UKWK-' . strtoupper($safeNomor) . '.docx';
+
+        return response()->download($tempPath, $fileName, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        ])->deleteFileAfterSend(true);
+    }
+
+    /**
+     * Unduh draf surat yang sedang dibuat/diedit di formulir sebagai berkas Microsoft Word (.docx).
+     */
+    public function unduhDraftWord(Request $request): BinaryFileResponse
+    {
+        $data = $request->validate([
+            'nomor_surat' => ['nullable', 'string', 'max:100'],
+            'tanggal_surat' => ['nullable', 'string', 'max:50'],
+            'sifat_surat' => ['nullable', 'string', 'max:20'],
+            'perihal' => ['nullable', 'string', 'max:255'],
+            'isi_surat' => ['nullable', 'string'],
+        ]);
+
+        $tempPath = $this->wordService->generateDocx($data);
+        $safePerihal = Str::slug($data['perihal'] ?? 'draf-surat', '-') ?: 'draf-surat';
+        $fileName = 'Draf-Surat-UKWK-' . Str::limit($safePerihal, 40, '') . '.docx';
+
+        return response()->download($tempPath, $fileName, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        ])->deleteFileAfterSend(true);
+    }
+
+    /**
+     * Ekstrak teks & atribut dari berkas Microsoft Word (.docx) hasil edit pengguna.
+     */
+    public function importWord(Request $request): JsonResponse
+    {
+        $request->validate([
+            'file_word' => ['required', 'file', 'max:10240', 'mimes:docx'],
+        ]);
+
+        $file = $request->file('file_word');
+        try {
+            $extracted = $this->wordService->extractFromDocx($file);
+            return response()->json([
+                'ok' => true,
+                'nama_file' => $file->getClientOriginalName(),
+                'nomor_surat' => $extracted['nomor_surat'],
+                'sifat_surat' => $extracted['sifat_surat'],
+                'perihal' => $extracted['perihal'],
+                'isi_surat' => $extracted['isi_surat'],
+            ]);
+        } catch (Throwable $e) {
+            return response()->json([
+                'ok' => false,
+                'message' => $e->getMessage(),
+            ], 422);
+        }
     }
 
     protected function pastikanBisaRevisi(Request $request, Surat $surat): void

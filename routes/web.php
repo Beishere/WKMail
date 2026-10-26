@@ -33,6 +33,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/surat/buat', [SuratController::class, 'create'])->name('surat.create');
     Route::post('/surat', [SuratController::class, 'store'])->name('surat.store');
     Route::post('/surat/hapus-terpilih', [SuratController::class, 'destroyBulk'])->name('surat.destroy-bulk');
+    Route::post('/surat/word-draf', [SuratController::class, 'unduhDraftWord'])->name('surat.word-draft');
+    Route::post('/surat/import-word', [SuratController::class, 'importWord'])->name('surat.import-word');
+    Route::get('/surat/{surat}/word', [SuratController::class, 'unduhWord'])->name('surat.word');
     Route::get('/surat/{surat}/revisi', [SuratController::class, 'edit'])->name('surat.edit');
     Route::put('/surat/{surat}', [SuratController::class, 'update'])->name('surat.update');
     Route::delete('/surat/{surat}', [SuratController::class, 'destroy'])->name('surat.destroy');

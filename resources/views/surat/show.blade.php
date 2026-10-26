@@ -49,13 +49,16 @@
                                     class="rounded-md px-2.5 py-1">Rantai Disposisi ({{ $pohonDisposisi->count() }})</button>
                         </div>
                         @if($user->isAdmin() || $user->isRektor() || $user->id_pengguna === $surat->id_pengirim)
-                            <a href="{{ route('surat.edit', $surat) }}" class="btn-secondary btn-sm">Edit</a>
+                            <a href="{{ route('surat.edit', $surat) }}" class="btn-secondary btn-sm">Edit / Revisi</a>
                             <form method="POST" action="{{ route('surat.destroy', $surat) }}" onsubmit="return confirm('Hapus surat ini beserta seluruh riwayat dan lampirannya?')">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn-danger btn-sm">Hapus</button>
                             </form>
                         @endif
+                        <a href="{{ route('surat.word', $surat) }}" class="btn-secondary btn-sm text-brand-700 border-brand-200 bg-brand-50/50 hover:bg-brand-100/70" title="Unduh & edit surat ini di Microsoft Word (.docx) lengkap dengan Kop Surat UKWK">
+                            ↓ Word (.docx)
+                        </a>
                         <button type="button" onclick="window.print()" class="btn-secondary btn-sm">
                             Cetak
                         </button>
@@ -109,7 +112,13 @@
                     @endif
 
                     <div>
-                        <div class="max-h-56 overflow-y-auto rounded-xl border border-slate-200 bg-white p-3.5 shadow-2xs">
+                        <div class="mb-1 flex items-center justify-between gap-2">
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Pratinjau Dokumen Surat</span>
+                            <a href="{{ route('surat.word', $surat) }}" class="text-[11px] font-semibold text-brand-600 hover:underline">
+                                ↓ Buka & Edit di Microsoft Word (.docx)
+                            </a>
+                        </div>
+                        <div class="max-h-56 overflow-y-auto rounded-xl border border-slate-200 bg-white p-3.5 shadow-sm">
                             <div class="mb-2.5 border-b border-slate-300 pb-2 text-center">
                                 <img src="{{ $surat->template?->path_kop ? route('template.kop', $surat->template) : asset('kop-ukwk.jpeg') }}"
                                      alt="Kop Surat UKWK" class="mx-auto max-h-20 w-full object-contain">
