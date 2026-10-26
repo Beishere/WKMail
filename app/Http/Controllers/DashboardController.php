@@ -76,7 +76,7 @@ class DashboardController extends Controller
 
         $data['aktivitas'] = RiwayatStatus::with('surat', 'pengguna')
             ->whereIn('id_surat', $base()->select('id_surat'))
-            ->latest('waktu')->latest('id_riwayat')->limit(8)->get();
+            ->latest('waktu')->latest('id_riwayat')->limit(6)->get();
 
         return view('dashboard', $data);
     }

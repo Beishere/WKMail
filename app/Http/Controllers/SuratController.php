@@ -42,7 +42,7 @@ class SuratController extends Controller
             ->when($request->dari, fn ($q, $v) => $q->whereDate('created_at', '>=', $v))
             ->when($request->sampai, fn ($q, $v) => $q->whereDate('created_at', '<=', $v))
             ->latest()
-            ->paginate(10)
+            ->paginate(7)
             ->withQueryString();
 
         return view('surat.index', [

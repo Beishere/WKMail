@@ -43,32 +43,32 @@
      }">
 
     <!-- Left: Login Form -->
-    <div class="lg:col-span-5 p-6 sm:p-8 flex flex-col justify-between">
+    <div class="lg:col-span-5 p-5 sm:p-6 flex flex-col justify-between">
         <div>
-            <div class="flex items-center gap-3">
-                <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-600 text-white font-bold shadow-md">
-                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <div class="flex items-center gap-2.5">
+                <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-600 text-white font-bold shadow-md">
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
                     </svg>
                 </div>
                 <div>
-                    <h1 class="text-lg font-bold text-slate-900">SIDISURAT</h1>
-                    <p class="text-xs text-slate-500">Sistem Disposisi Surat Online Universitas</p>
+                    <h1 class="text-base font-bold text-slate-900">SIDISURAT</h1>
+                    <p class="text-[11px] text-slate-500">Sistem Disposisi Surat Online UKWK</p>
                 </div>
             </div>
 
-            <div class="mt-6">
-                <h2 class="text-xl font-bold text-slate-900">Masuk ke Akun Anda</h2>
-                <p class="mt-1 text-xs text-slate-500">Kelola pengiriman, validasi, disposisi, dan pelacakan status surat secara terpadu.</p>
+            <div class="mt-4">
+                <h2 class="text-lg font-bold text-slate-900">Masuk ke Akun Anda</h2>
+                <p class="mt-0.5 text-xs text-slate-500">Kelola pengiriman, validasi, disposisi, dan pelacakan status surat secara terpadu.</p>
             </div>
 
             @if($errors->any())
-                <div class="mt-4 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-xs text-rose-700">
+                <div class="mt-3 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-xs text-rose-700">
                     {{ $errors->first() }}
                 </div>
             @endif
 
-            <form x-ref="form" method="POST" action="{{ route('login') }}" class="mt-5 space-y-4">
+            <form x-ref="form" method="POST" action="{{ route('login') }}" class="mt-4 space-y-3">
                 @csrf
                 <div>
                     <label class="form-label" for="email">Alamat Email</label>
@@ -90,40 +90,39 @@
                     <span class="text-slate-400">Password demo: <code class="font-semibold text-slate-600">password</code></span>
                 </div>
 
-                <button type="submit" class="btn-primary w-full py-2.5">
+                <button type="submit" class="btn-primary w-full py-2">
                     Masuk ke Sistem
                 </button>
             </form>
         </div>
 
-        <div class="mt-8 border-t border-slate-100 pt-4 text-[11px] text-slate-400">
-            Alur Pelacakan: <span class="font-medium text-slate-600">Terkirim → Divalidasi → Dibaca → Didisposisi → Diproses → Selesai</span>
+        <div class="mt-4 border-t border-slate-100 pt-3 text-[11px] text-slate-400">
+            Alur: <span class="font-medium text-slate-600">Terkirim → Divalidasi → Dibaca → Didisposisi → Diproses → Selesai</span>
         </div>
     </div>
 
     <!-- Right: Quick Demo Accounts -->
-    <div class="lg:col-span-7 bg-slate-50 border-t lg:border-t-0 lg:border-l border-slate-200 p-6 sm:p-8">
+    <div class="lg:col-span-7 bg-slate-50 border-t lg:border-t-0 lg:border-l border-slate-200 p-5 sm:p-6">
         <div class="flex items-center justify-between">
             <div>
                 <span class="badge bg-brand-50 text-brand-700 ring-brand-600/20">Mode Demo Capstone</span>
-                <h3 class="mt-1 text-sm font-bold text-slate-800">Login Cepat 1-Klik Sesuai Peran Aktor</h3>
-                <p class="text-xs text-slate-500">Klik salah satu akun di bawah untuk langsung masuk dan menguji alur disposisi surat.</p>
+                <h3 class="mt-0.5 text-sm font-bold text-slate-800">Login Cepat 1-Klik Sesuai Peran Aktor</h3>
             </div>
         </div>
 
-        <div class="mt-4 space-y-4">
+        <div class="mt-3 space-y-2.5">
             @foreach($demoAccounts as $grp)
                 <div>
-                    <h4 class="mb-2 text-[11px] font-bold uppercase tracking-wider text-slate-400">{{ $grp['group'] }}</h4>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <h4 class="mb-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">{{ $grp['group'] }}</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
                         @foreach($grp['items'] as $acc)
                             <button type="button" @click="fillLogin('{{ $acc['email'] }}')"
-                                    class="group flex items-center justify-between rounded-xl border border-slate-200 bg-white px-3 py-2 text-left transition hover:border-brand-400 hover:bg-brand-50/40 hover:shadow-xs">
+                                    class="group flex items-center justify-between rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-left transition hover:border-brand-400 hover:bg-brand-50/40">
                                 <div class="min-w-0 pr-2">
-                                    <p class="text-xs font-semibold text-slate-800 group-hover:text-brand-700 truncate">{{ $acc['label'] }}</p>
-                                    <p class="text-[11px] text-slate-400 truncate">{{ $acc['email'] }}</p>
+                                    <p class="text-[11px] font-semibold text-slate-800 group-hover:text-brand-700 truncate">{{ $acc['label'] }}</p>
+                                    <p class="text-[10px] text-slate-400 truncate">{{ $acc['email'] }}</p>
                                 </div>
-                                <span class="shrink-0 rounded-md bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-600 group-hover:bg-brand-600 group-hover:text-white">
+                                <span class="shrink-0 rounded-md bg-slate-100 px-1.5 py-0.5 text-[10px] font-bold text-slate-600 group-hover:bg-brand-600 group-hover:text-white">
                                     {{ $acc['badge'] }}
                                 </span>
                             </button>
