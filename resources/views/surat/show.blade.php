@@ -99,7 +99,14 @@
 
                     <div>
                         <h3 class="mb-2 text-xs font-bold uppercase tracking-wider text-slate-400">Isi / Ringkasan Surat</h3>
-                        <div class="rounded-xl border border-slate-200 bg-slate-50/60 p-4 font-mono text-xs whitespace-pre-wrap leading-relaxed text-slate-800">{{ $surat->isi_surat ?: 'Tidak ada isi teks surat (lihat berkas lampiran).' }}</div>
+                        <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-2xs">
+                            @if($surat->template?->path_kop)
+                                <div class="mb-4 border-b-2 border-slate-800 pb-3 text-center">
+                                    <img src="{{ route('template.kop', $surat->template) }}" alt="Kop Surat" class="mx-auto max-h-36 w-full object-contain">
+                                </div>
+                            @endif
+                            <div class="font-mono text-xs whitespace-pre-wrap leading-relaxed text-slate-800">{{ $surat->isi_surat ?: 'Tidak ada isi teks surat (lihat berkas lampiran).' }}</div>
+                        </div>
                     </div>
 
                     <!-- Lampiran Pengirim -->

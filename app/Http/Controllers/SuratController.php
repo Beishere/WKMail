@@ -193,7 +193,24 @@ class SuratController extends Controller
         return response()->json([
             'perihal' => $template->perihal_default,
             'isi' => $template->render($user),
+            'kop_url' => $template->path_kop ? route('template.kop', $template) : null,
+            'file_template_url' => $template->path_file_template ? route('template.unduh', $template) : null,
+            'nama_file_template' => $template->nama_file_template,
         ]);
+    }
+
+    public function kop(TemplateSurat $template)
+    {
+        abort_unless($template->path_kop && Storage::disk('local')->exists($template->path_kop), 404);
+
+        return Storage::disk('local')->response($template->path_kop);
+    }
+
+    public function unduhTemplate(TemplateSurat $template): StreamedResponse
+    {
+        abort_unless($template->path_file_template && Storage::disk('local')->exists($template->path_file_template), 404);
+
+        return Storage::disk('local')->download($template->path_file_template, $template->nama_file_template ?? 'template-surat.docx');
     }
 
     protected function pastikanBisaRevisi(Request $request, Surat $surat): void

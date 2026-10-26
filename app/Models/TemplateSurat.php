@@ -9,7 +9,14 @@ class TemplateSurat extends Model
 {
     protected $table = 'template_surat';
     protected $primaryKey = 'id_template';
-    protected $fillable = ['nama_template', 'perihal_default', 'isi_template'];
+    protected $fillable = [
+        'nama_template',
+        'perihal_default',
+        'isi_template',
+        'path_kop',
+        'nama_file_template',
+        'path_file_template',
+    ];
 
     public function surat(): HasMany
     {

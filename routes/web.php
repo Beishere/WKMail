@@ -41,6 +41,8 @@ Route::middleware('auth')->group(function () {
     });
     Route::get('/surat/{surat}', [SuratController::class, 'show'])->name('surat.show');
     Route::get('/lampiran/{lampiran}/unduh', [SuratController::class, 'unduh'])->name('lampiran.unduh');
+    Route::get('/template/{template}/kop', [SuratController::class, 'kop'])->name('template.kop');
+    Route::get('/template/{template}/unduh', [SuratController::class, 'unduhTemplate'])->name('template.unduh');
 
     // ---------------------------------------------------------------- Admin Surat Rektorat (filter utama)
     Route::middleware('role:admin')->group(function () {

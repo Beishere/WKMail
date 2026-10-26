@@ -1,15 +1,16 @@
 @php
     $isEdit = $surat->exists;
+    $initialTpl = $surat->template;
 @endphp
 
 @extends('layouts.app', [
-    'title' => $isEdit ? 'Revisi & Kirim Ulang Surat' : 'Buat & Kirim Surat Baru',
-    'subtitle' => 'Gunakan template surat untuk pengisian perihal dan draf isi surat secara otomatis',
+    'title' => $isEdit ? 'Edit / Revisi Surat' : 'Buat & Kirim Surat Baru',
+    'subtitle' => 'Gunakan template surat untuk menampilkan kop surat serta mengisi perihal dan draf isi surat secara otomatis',
 ])
 
 @section('content')
     <div class="mx-auto max-w-4xl">
-        @if($isEdit && $surat->catatan_admin)
+        @if($isEdit && $surat->catatan_admin && $surat->status_terkini === \App\Models\Surat::PERLU_REVISI)
             <div class="mb-6 rounded-xl border border-rose-300 bg-rose-50 p-4 text-sm text-rose-900">
                 <p class="font-bold">Catatan Revisi dari Admin Surat Rektorat:</p>
                 <p class="mt-1">{{ $surat->catatan_admin }}</p>
@@ -19,9 +20,17 @@
         <div class="card"
              x-data="{
                 loadingTpl: false,
+                kopUrl: '{{ $initialTpl?->path_kop ? route('template.kop', $initialTpl) : '' }}',
+                fileTplUrl: '{{ $initialTpl?->path_file_template ? route('template.unduh', $initialTpl) : '' }}',
+                fileTplNama: '{{ $initialTpl?->nama_file_template ?? '' }}',
                 pilihTemplate(e) {
                     const id = e.target.value;
-                    if (!id) return;
+                    if (!id) {
+                        this.kopUrl = '';
+                        this.fileTplUrl = '';
+                        this.fileTplNama = '';
+                        return;
+                    }
                     this.loadingTpl = true;
                     fetch(`{{ url('/template') }}/${id}/render`, {
                         headers: { 'Accept': 'application/json' }
@@ -30,12 +39,15 @@
                     .then(data => {
                         this.$refs.perihal.value = data.perihal;
                         this.$refs.isi.value = data.isi;
+                        this.kopUrl = data.kop_url || '';
+                        this.fileTplUrl = data.file_template_url || '';
+                        this.fileTplNama = data.nama_file_template || '';
                     })
                     .finally(() => { this.loadingTpl = false; });
                 }
              }">
             <div class="card-header">
-                <h2 class="card-title">{{ $isEdit ? 'Formulir Revisi Surat (' . $surat->nomor_surat . ')' : 'Formulir Pengajuan Surat Masuk' }}</h2>
+                <h2 class="card-title">{{ $isEdit ? 'Formulir Edit / Revisi Surat (' . $surat->nomor_surat . ')' : 'Formulir Pengajuan Surat Masuk' }}</h2>
                 <a href="{{ $isEdit ? route('surat.show', $surat) : route('surat.index') }}" class="btn-secondary btn-sm">Kembali</a>
             </div>
 
@@ -50,7 +62,7 @@
 
                 <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div>
-                        <label class="form-label">Template Surat Otomatis (Opsional)</label>
+                        <label class="form-label">Template & Kop Surat Otomatis (Opsional)</label>
                         <select name="id_template" @change="pilihTemplate($event)" class="form-input">
                             <option value="">— Pilih Template untuk Isi Otomatis —</option>
                             @foreach($templates as $tpl)
@@ -59,8 +71,16 @@
                                 </option>
                             @endforeach
                         </select>
-                        <p class="form-hint" x-show="!loadingTpl">Memilih template akan mengisi perihal & isi surat secara otomatis.</p>
-                        <p class="form-hint text-brand-600 font-medium" x-show="loadingTpl" x-cloak>Memuat template surat...</p>
+                        <p class="form-hint" x-show="!loadingTpl">Memilih template akan mengisi perihal, kop, & draf isi surat secara otomatis.</p>
+                        <p class="form-hint text-brand-600 font-medium" x-show="loadingTpl" x-cloak>Memuat template & kop surat...</p>
+
+                        <template x-if="fileTplUrl">
+                            <div class="mt-2">
+                                <a :href="fileTplUrl" class="btn-secondary btn-sm text-brand-700">
+                                    ↓ Unduh File Template Kop Surat (<span x-text="fileTplNama"></span>)
+                                </a>
+                            </div>
+                        </template>
                     </div>
 
                     <div>
@@ -105,6 +125,11 @@
 
                 <div>
                     <label class="form-label">Isi / Ringkasan Surat</label>
+                    <template x-if="kopUrl">
+                        <div class="mb-2 rounded-t-xl border border-b-0 border-slate-300 bg-white p-3 text-center">
+                            <img :src="kopUrl" alt="Kop Surat" class="mx-auto max-h-32 object-contain">
+                        </div>
+                    </template>
                     <textarea x-ref="isi" name="isi_surat" rows="10"
                               placeholder="Tuliskan isi surat atau pilih template di atas..."
                               class="form-input font-mono text-xs leading-relaxed">{{ old('isi_surat', $surat->isi_surat) }}</textarea>
@@ -121,7 +146,7 @@
                 <div class="flex items-center justify-end gap-3 border-t border-slate-100 pt-4">
                     <a href="{{ $isEdit ? route('surat.show', $surat) : route('surat.index') }}" class="btn-secondary">Batal</a>
                     <button type="submit" class="btn-primary">
-                        {{ $isEdit ? 'Kirim Ulang Revisi Surat' : 'Kirim Surat ke Rektorat' }}
+                        {{ $isEdit ? 'Simpan Perubahan Surat' : 'Kirim Surat ke Rektorat' }}
                     </button>
                 </div>
             </form>
