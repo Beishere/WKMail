@@ -25,18 +25,18 @@ class DemoSuratSeeder extends Seeder
         $u = fn (string $email) => Pengguna::where('email', $email)->firstOrFail();
         $unit = fn (string $prefix) => Unit::where('nama_unit', 'like', $prefix . '%')->firstOrFail()->id_unit;
 
-        $admin = $u('admin@univ.ac.id');
-        $rektor = $u('rektor@univ.ac.id');
-        $wr1 = $u('wr1@univ.ac.id');
-        $wr2 = $u('wr2@univ.ac.id');
-        $wr3 = $u('wr3@univ.ac.id');
-        $bau = $u('bau@univ.ac.id');
-        $hmj = $u('hmj@univ.ac.id');
-        $baa = $u('baa@univ.ac.id');
+        $admin = $u('admin@widyakarya.ac.id');
+        $rektor = $u('rektor@widyakarya.ac.id');
+        $wr1 = $u('wr1ukwk@widyakarya.ac.id');
+        $wr2 = $u('wr2ukwk@widyakarya.ac.id');
+        $wr3 = $u('wr3ukwk@widyakarya.ac.id');
+        $bau = $u('bau@widyakarya.ac.id');
+        $bka = $u('bka@widyakarya.ac.id');
+        $baa = $u('baa@widyakarya.ac.id');
         $tpl = fn (string $nama) => TemplateSurat::where('nama_template', $nama)->first();
 
         // 1) Selesai penuh: FT -> Admin -> Rektor -> WR II -> BAU -> Selesai
-        $s = $this->kirim($u('ft@univ.ac.id'), 'Permohonan Peminjaman Aula Utama untuk Wisuda Fakultas', 'Urgent', $tpl('Peminjaman Sarana & Prasarana'), now()->subMonths(2)->setTime(8, 30));
+        $s = $this->kirim($u('teknik@widyakarya.ac.id'), 'Permohonan Peminjaman Aula St. Thomas Aquinas untuk Yudisium Fakultas Teknik', 'Urgent', $tpl('Peminjaman Sarana & Prasarana'), now()->subMonths(2)->setTime(8, 30));
         $this->at(now()->subMonths(2)->setTime(10, 0), fn () => $svc->validasi($s, $admin, ['kode_sumber' => 'B', 'kode_bidang' => 'D', 'id_unit_saran' => $unit('Wakil Rektor II')]));
         $this->at(now()->subMonths(2)->setTime(13, 0), fn () => $svc->tandaiDibaca($s->fresh(), $rektor));
         $this->at(now()->subMonths(2)->setTime(13, 15), fn () => $svc->disposisiRektor($s->fresh(), $rektor, ['unit_tujuan' => [$unit('Wakil Rektor II')], 'instruksi' => 'Mohon ditindaklanjuti dan dikoordinasikan dengan BAU.']));
@@ -47,42 +47,42 @@ class DemoSuratSeeder extends Seeder
         $this->at(now()->subMonths(2)->addDays(2)->setTime(8, 0), fn () => $svc->updateProgres($d2, $bau, Surat::DIPROSES, 'Pengecekan jadwal aula.'));
         $this->at(now()->subMonths(2)->addDays(3)->setTime(15, 0), fn () => $svc->selesaikan($d2->fresh(), $bau, 'Aula telah dijadwalkan dan perlengkapan disiapkan.'));
 
-        // 2) Diproses: HMJ TI -> ... -> WR III -> HMJ (unit teknis) Diproses
-        $s = $this->kirim($u('hmjti@univ.ac.id'), 'Permohonan Izin Seminar Nasional Teknologi', 'Biasa', $tpl('Permohonan Izin Kegiatan'), now()->subDays(6)->setTime(9, 0));
+        // 2) Diproses: HMJ SI eCommerce -> ... -> WR III -> BKA Diproses
+        $s = $this->kirim($u('hmjsi@widyakarya.ac.id'), 'Permohonan Izin Seminar Nasional Sistem Informasi eCommerce', 'Biasa', $tpl('Permohonan Izin Kegiatan'), now()->subDays(6)->setTime(9, 0));
         $this->at(now()->subDays(6)->setTime(11, 0), fn () => $svc->validasi($s, $admin, ['kode_sumber' => 'B', 'kode_bidang' => 'K', 'id_unit_saran' => $unit('Wakil Rektor III')]));
         $this->at(now()->subDays(5)->setTime(8, 0), fn () => $svc->tandaiDibaca($s->fresh(), $rektor));
         $this->at(now()->subDays(5)->setTime(8, 20), fn () => $svc->disposisiRektor($s->fresh(), $rektor, ['unit_tujuan' => [$unit('Wakil Rektor III')], 'instruksi' => 'Setujui dan dampingi pelaksanaan.', 'batas_waktu' => now()->addDays(7)->toDateString()]));
         $d = Disposisi::where('id_surat', $s->id_surat)->first();
-        $this->at(now()->subDays(4)->setTime(10, 0), fn () => $svc->teruskan($d, $wr3, ['unit_tujuan' => [$unit('HMJ -')], 'instruksi' => 'Fasilitasi perizinan dan pendampingan kegiatan.', 'batas_waktu' => now()->addDays(5)->toDateString()]));
+        $this->at(now()->subDays(4)->setTime(10, 0), fn () => $svc->teruskan($d, $wr3, ['unit_tujuan' => [$unit('BKA')], 'instruksi' => 'Fasilitasi perizinan dan pendampingan kegiatan kemahasiswaan.', 'batas_waktu' => now()->addDays(5)->toDateString()]));
         $d2 = Disposisi::where('id_induk_disposisi', $d->id_disposisi)->first();
-        $this->at(now()->subDays(3)->setTime(13, 0), fn () => $svc->updateProgres($d2, $hmj, Surat::DIPROSES, 'Sedang menyiapkan surat izin kegiatan.'));
+        $this->at(now()->subDays(3)->setTime(13, 0), fn () => $svc->updateProgres($d2, $bka, Surat::DIPROSES, 'Sedang menyiapkan surat izin kegiatan kemahasiswaan.'));
 
         // 3) Divalidasi, menunggu Rektor (urgent)
-        $s = $this->kirim($u('yayasan@univ.ac.id'), 'Undangan Rapat Koordinasi Anggaran Tahunan Yayasan', 'Urgent', $tpl('Undangan'), now()->subDay()->setTime(14, 0));
-        $this->at(now()->subDay()->setTime(15, 0), fn () => $svc->validasi($s, $admin, ['kode_sumber' => 'A', 'kode_bidang' => 'B', 'id_unit_saran' => $unit('Wakil Rektor II'), 'catatan_admin' => 'Rapat dijadwalkan minggu depan.']));
+        $s = $this->kirim($u('yayasan@widyakarya.ac.id'), 'Undangan Rapat Koordinasi Rencana Kerja & Anggaran Tahunan Yayasan PTK Adisucipto', 'Urgent', $tpl('Undangan'), now()->subDay()->setTime(14, 0));
+        $this->at(now()->subDay()->setTime(15, 0), fn () => $svc->validasi($s, $admin, ['kode_sumber' => 'A', 'kode_bidang' => 'B', 'id_unit_saran' => $unit('Wakil Rektor II'), 'catatan_admin' => 'Rapat dijadwalkan minggu depan bersama Pembina Yayasan.']));
 
         // 4) Terkirim, menunggu validasi admin
-        $this->kirim($u('mitra@perusahaan.co.id'), 'Penawaran Kerja Sama Program Magang Mahasiswa', 'Biasa', $tpl('Permohonan Kerja Sama'), now()->subHours(5));
-        $this->kirim($u('mitra@perusahaan.co.id'), 'Undangan Seminar Industri 4.0', 'Urgent', $tpl('Undangan'), now()->subHours(2));
+        $this->kirim($u('mitra@institusi.co.id'), 'Penawaran Kerja Sama Program Magang & MBKM Mahasiswa UKWK', 'Biasa', $tpl('Permohonan Kerja Sama'), now()->subHours(5));
+        $this->kirim($u('fh@widyakarya.ac.id'), 'Permohonan Narasumber Kuliah Tamu Fakultas Hukum UKWK', 'Urgent', $tpl('Undangan'), now()->subHours(2));
 
         // 5) Perlu revisi
-        $s = $this->kirim($u('alumni@univ.ac.id'), 'Permohonan Dukungan Reuni Akbar Alumni', 'Biasa', null, now()->subDays(2)->setTime(10, 0));
-        $this->at(now()->subDays(2)->setTime(13, 0), fn () => $svc->tolak($s, $admin, 'Mohon lampirkan proposal kegiatan dan rincian anggaran.'));
+        $s = $this->kirim($u('alumni@widyakarya.ac.id'), 'Permohonan Dukungan Reuni Akbar Ikatan Alumni UKWK', 'Biasa', null, now()->subDays(2)->setTime(10, 0));
+        $this->at(now()->subDays(2)->setTime(13, 0), fn () => $svc->tolak($s, $admin, 'Mohon lampirkan proposal kegiatan dan rincian anggaran (RAB).'));
 
         // 6) Diarsipkan sebagai informasi
-        $s = $this->kirim($u('feb@univ.ac.id'), 'Laporan Pelaksanaan Kuliah Umum FEB', 'Biasa', null, now()->subMonth()->setTime(9, 0));
+        $s = $this->kirim($u('feb@widyakarya.ac.id'), 'Laporan Pelaksanaan Kuliah Umum Manajemen & Akuntansi FEB UKWK', 'Biasa', null, now()->subMonth()->setTime(9, 0));
         $this->at(now()->subMonth()->setTime(11, 0), fn () => $svc->validasi($s, $admin, ['kode_sumber' => 'B', 'kode_bidang' => 'Q']));
         $this->at(now()->subMonth()->setTime(14, 0), fn () => $svc->tandaiDibaca($s->fresh(), $rektor));
-        $this->at(now()->subMonth()->setTime(14, 5), fn () => $svc->arsipkan($s->fresh(), $rektor, 'Sebagai informasi.'));
+        $this->at(now()->subMonth()->setTime(14, 5), fn () => $svc->arsipkan($s->fresh(), $rektor, 'Sebagai informasi pimpinan.'));
 
         // 7) Didisposisi ke WR I, belum diteruskan
-        $s = $this->kirim($u('ft@univ.ac.id'), 'Permohonan Data Akademik untuk Akreditasi Prodi', 'Urgent', $tpl('Permohonan Data Akademik'), now()->subDays(3)->setTime(8, 0));
+        $s = $this->kirim($u('pertanian@widyakarya.ac.id'), 'Permohonan Data Akademik untuk Akreditasi Prodi Agribisnis & Teknologi Pangan', 'Urgent', $tpl('Permohonan Data Akademik'), now()->subDays(3)->setTime(8, 0));
         $this->at(now()->subDays(3)->setTime(9, 0), fn () => $svc->validasi($s, $admin, ['kode_sumber' => 'B', 'kode_bidang' => 'Q', 'id_unit_saran' => $unit('Wakil Rektor I')]));
         $this->at(now()->subDays(2)->setTime(8, 0), fn () => $svc->tandaiDibaca($s->fresh(), $rektor));
-        $this->at(now()->subDays(2)->setTime(8, 10), fn () => $svc->disposisiRektor($s->fresh(), $rektor, ['unit_tujuan' => [$unit('Wakil Rektor I')], 'instruksi' => 'Prioritaskan, koordinasikan dengan BAA.', 'batas_waktu' => now()->addDays(3)->toDateString()]));
+        $this->at(now()->subDays(2)->setTime(8, 10), fn () => $svc->disposisiRektor($s->fresh(), $rektor, ['unit_tujuan' => [$unit('Wakil Rektor I')], 'instruksi' => 'Prioritaskan, koordinasikan dengan BAA dan LPM.', 'batas_waktu' => now()->addDays(3)->toDateString()]));
 
         // 8) Pending di BAU
-        $s = $this->kirim($u('hmjti@univ.ac.id'), 'Permohonan Pencairan Dana Lomba Programming', 'Biasa', $tpl('Permohonan Pencairan Dana'), now()->subDays(10)->setTime(9, 0));
+        $s = $this->kirim($u('hmjsi@widyakarya.ac.id'), 'Permohonan Pencairan Dana Kompetisi Inovasi Digital Mahasiswa', 'Biasa', $tpl('Permohonan Pencairan Dana'), now()->subDays(10)->setTime(9, 0));
         $this->at(now()->subDays(10)->setTime(10, 0), fn () => $svc->validasi($s, $admin, ['kode_sumber' => 'B', 'kode_bidang' => 'B', 'id_unit_saran' => $unit('Wakil Rektor II')]));
         $this->at(now()->subDays(9)->setTime(8, 0), fn () => $svc->tandaiDibaca($s->fresh(), $rektor));
         $this->at(now()->subDays(9)->setTime(8, 30), fn () => $svc->disposisiRektor($s->fresh(), $rektor, ['unit_tujuan' => [$unit('Wakil Rektor II')], 'instruksi' => 'Proses sesuai ketentuan anggaran.']));
@@ -92,12 +92,12 @@ class DemoSuratSeeder extends Seeder
         $this->at(now()->subDays(7)->setTime(10, 0), fn () => $svc->updateProgres($d2, $bau, Surat::PENDING, 'Menunggu kelengkapan kuitansi dari HMJ.'));
 
         // 9) Riwayat bulan-bulan sebelumnya (tren dashboard)
-        foreach ([[4, 'Permohonan Kalender Akademik Semester Genap', 'Q', 'Wakil Rektor I', 'BAA', $wr1, $baa],
-                  [3, 'Permohonan Pengadaan Proyektor Ruang Kuliah', 'D', 'Wakil Rektor II', 'BAU', $wr2, $bau],
-                  [3, 'Permohonan Rekomendasi Beasiswa Mahasiswa', 'K', 'Wakil Rektor III', 'HMJ -', $wr3, $hmj],
-                  [1, 'Permohonan Penambahan Dosen Tamu', 'C', 'Wakil Rektor II', 'BAU', $wr2, $bau]] as [$bln, $perihal, $bid, $wrNama, $utNama, $wrUser, $utUser]) {
+        foreach ([[4, 'Penyusunan Kalender Akademik Semester Genap UKWK', 'Q', 'Wakil Rektor I', 'BAA', $wr1, $baa],
+                  [3, 'Permohonan Pembaruan Jaringan & Server SIAKAD', 'D', 'Wakil Rektor II', 'BAU', $wr2, $bau],
+                  [3, 'Permohonan Rekomendasi Beasiswa Mahasiswa UKWK', 'K', 'Wakil Rektor III', 'BKA', $wr3, $bka],
+                  [1, 'Permohonan Pengangkatan Dosen Tamu Praktisi', 'C', 'Wakil Rektor II', 'BAU', $wr2, $bau]] as [$bln, $perihal, $bid, $wrNama, $utNama, $wrUser, $utUser]) {
             $t = now()->subMonths($bln)->startOfMonth()->addDays(9)->setTime(9, 0);
-            $s = $this->kirim($u('ft@univ.ac.id'), $perihal, 'Biasa', null, $t);
+            $s = $this->kirim($u('teknik@widyakarya.ac.id'), $perihal, 'Biasa', null, $t);
             $this->at($t->copy()->addHours(2), fn () => $svc->validasi($s, $admin, ['kode_sumber' => 'B', 'kode_bidang' => $bid, 'id_unit_saran' => $unit($wrNama)]));
             $this->at($t->copy()->addHours(5), fn () => $svc->tandaiDibaca($s->fresh(), $rektor));
             $this->at($t->copy()->addHours(5)->addMinutes(10), fn () => $svc->disposisiRektor($s->fresh(), $rektor, ['unit_tujuan' => [$unit($wrNama)], 'instruksi' => 'Tindak lanjuti.']));

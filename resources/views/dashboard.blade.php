@@ -1,20 +1,24 @@
+@php
+    $theme = $user->theme();
+@endphp
+
 @extends('layouts.app', [
     'title' => 'Dashboard ' . ($user->role?->nama_role ?? ''),
     'subtitle' => $user->unit?->nama_unit ?? 'Ringkasan aktivitas dan status disposisi surat',
 ])
 
 @section('content')
-    <!-- Compact Banner -->
-    <div class="mb-3 rounded-xl bg-gradient-to-r from-slate-900 via-brand-950 to-brand-900 px-4 py-2.5 text-white shadow-2xs flex flex-wrap items-center justify-between gap-2">
+    <!-- Compact Role-Themed Banner -->
+    <div class="mb-3 rounded-xl {{ $theme['banner_bg'] }} px-4 py-2.5 text-white shadow-sm flex flex-wrap items-center justify-between gap-2">
         <div class="flex items-center gap-2.5 min-w-0">
-            <span class="rounded-full bg-white/10 px-2 py-0.5 text-[11px] font-medium text-brand-200 ring-1 ring-white/15 shrink-0">
-                {{ $user->role?->nama_role }}
+            <span class="rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider ring-1 shrink-0 {{ $theme['level_badge'] }}">
+                {{ $theme['level'] }}
             </span>
-            <p class="text-xs font-bold truncate">Selamat datang, {{ $user->nama }}</p>
-            <span class="hidden text-[11px] text-slate-300 lg:inline truncate">— {{ $user->unit?->nama_unit }}</span>
+            <p class="text-xs font-bold truncate">{{ $user->nama }}</p>
+            <span class="hidden text-[11px] text-white/80 lg:inline truncate">• {{ $user->unit?->nama_unit }}</span>
         </div>
         <div class="flex items-center gap-1.5">
-            <a href="{{ route('surat.create') }}" class="btn-sm rounded-lg bg-white px-2.5 py-1 text-[11px] font-semibold text-slate-900 hover:bg-slate-100">
+            <a href="{{ route('surat.create') }}" class="btn-sm rounded-lg bg-[#ed6623] px-2.5 py-1 text-[11px] font-bold text-white shadow-sm ring-1 ring-white/30 hover:bg-[#d95316]">
                 + Buat Surat
             </a>
             @if($user->isAdmin())
@@ -33,7 +37,7 @@
         </div>
     </div>
 
-    <!-- Compact Stats Cards -->
+    <!-- Compact Stats Cards with Role Accent Border -->
     <div class="grid grid-cols-2 gap-3 lg:grid-cols-4 mb-3">
         @php
             $colorMap = [
@@ -48,7 +52,7 @@
             ];
         @endphp
         @foreach($stats as $st)
-            <div class="card px-3.5 py-2.5 flex items-center justify-between">
+            <div class="card {{ $theme['stat_border'] }} px-3.5 py-2.5 flex items-center justify-between">
                 <div>
                     <p class="text-[11px] font-medium text-slate-500">{{ $st['label'] }}</p>
                     <p class="text-xl font-bold text-slate-900 leading-tight">{{ $st['value'] }}</p>

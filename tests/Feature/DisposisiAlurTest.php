@@ -27,11 +27,11 @@ class DisposisiAlurTest extends TestCase
     {
         Storage::fake('local');
 
-        $pengirim = Pengguna::where('email', 'ft@univ.ac.id')->firstOrFail();
-        $admin = Pengguna::where('email', 'admin@univ.ac.id')->firstOrFail();
-        $rektor = Pengguna::where('email', 'rektor@univ.ac.id')->firstOrFail();
-        $wr1 = Pengguna::where('email', 'wr1@univ.ac.id')->firstOrFail();
-        $baa = Pengguna::where('email', 'baa@univ.ac.id')->firstOrFail();
+        $pengirim = Pengguna::where('email', 'teknik@widyakarya.ac.id')->firstOrFail();
+        $admin = Pengguna::where('email', 'admin@widyakarya.ac.id')->firstOrFail();
+        $rektor = Pengguna::where('email', 'rektor@widyakarya.ac.id')->firstOrFail();
+        $wr1 = Pengguna::where('email', 'wr1ukwk@widyakarya.ac.id')->firstOrFail();
+        $baa = Pengguna::where('email', 'baa@widyakarya.ac.id')->firstOrFail();
 
         $unitWr1 = Unit::where('nama_unit', 'like', 'Wakil Rektor I%')->firstOrFail();
         $unitBaa = Unit::where('nama_unit', 'like', 'BAA%')->firstOrFail();
