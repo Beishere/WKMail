@@ -1,6 +1,6 @@
 FROM php:8.3-cli-alpine
 
-# Install system dependencies & PHP extensions for SQLite, MySQL, Postgres, and File/Zip handling
+# Install system dependencies & PHP extensions for SQLite, MySQL, and File/Zip handling
 RUN apk add --no-cache \
     bash \
     curl \
@@ -30,8 +30,10 @@ COPY . .
 RUN npm run build \
     && rm -rf node_modules \
     && composer dump-autoload --optimize \
+    && mkdir -p storage/framework/cache storage/framework/sessions storage/framework/views storage/logs bootstrap/cache database \
+    && chmod -R 777 /app/storage /app/bootstrap/cache /app/database \
     && chmod +x /app/docker-entrypoint.sh
 
-EXPOSE 8080
+EXPOSE 8080 7860
 
 ENTRYPOINT ["/app/docker-entrypoint.sh"]

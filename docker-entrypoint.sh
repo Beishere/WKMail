@@ -8,11 +8,12 @@ if [ ! -f .env ]; then
 fi
 
 mkdir -p storage/framework/{cache,sessions,views} storage/logs bootstrap/cache database
-chmod -R 775 storage bootstrap/cache database
+chmod -R 777 storage bootstrap/cache database 2>/dev/null || true
 
 if [ "${DB_CONNECTION:-sqlite}" = "sqlite" ]; then
     DB_FILE="${DB_DATABASE:-/app/database/database.sqlite}"
     touch "$DB_FILE"
+    chmod 666 "$DB_FILE" 2>/dev/null || true
 fi
 
 if [ -z "$APP_KEY" ]; then
