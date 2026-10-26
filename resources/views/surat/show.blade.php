@@ -38,7 +38,7 @@
                         <h2 class="text-base font-bold text-slate-900">{{ $surat->perihal }}</h2>
                     </div>
                     <div class="no-print flex flex-wrap items-center gap-2">
-                        @if($user->isAdmin() || ($user->id_pengguna === $surat->id_pengirim && in_array($surat->status_terkini, [\App\Models\Surat::TERKIRIM, \App\Models\Surat::PERLU_REVISI], true)))
+                        @if($user->isAdmin() || $user->isRektor() || $user->id_pengguna === $surat->id_pengirim)
                             <a href="{{ route('surat.edit', $surat) }}" class="btn-secondary btn-sm">Edit Surat</a>
                             <form method="POST" action="{{ route('surat.destroy', $surat) }}" onsubmit="return confirm('Hapus surat ini beserta seluruh riwayat dan lampirannya?')">
                                 @csrf

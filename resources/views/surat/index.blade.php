@@ -1,6 +1,12 @@
+@php
+    /** @var \App\Models\Pengguna $authUser */
+    $authUser = auth()->user();
+    $allIds = $surat->pluck('id_surat')->values();
+@endphp
+
 @extends('layouts.app', [
-    'title' => auth()->user()->isPengirim() ? 'Surat Saya' : 'Daftar & Arsip Surat',
-    'subtitle' => 'Pencarian, pemfilteran klasifikasi kode, dan pelacakan status surat',
+    'title' => $authUser->isPengirim() ? 'Surat Saya' : 'Daftar & Arsip Surat',
+    'subtitle' => 'Pencarian, pemfilteran klasifikasi kode, pengelolaan, dan pelacakan status surat',
 ])
 
 @section('content')
@@ -65,31 +71,70 @@
                 <div class="flex items-center gap-2">
                     <a href="{{ route('surat.index') }}" class="btn-secondary btn-sm">Reset</a>
                     <button type="submit" class="btn-primary btn-sm">Terapkan Filter</button>
-                    @if(auth()->user()->isPengirim())
-                        <a href="{{ route('surat.create') }}" class="btn-success btn-sm">+ Buat Surat Baru</a>
-                    @endif
+                    <a href="{{ route('surat.create') }}" class="btn-success btn-sm">+ Buat Surat Baru</a>
                 </div>
             </div>
         </form>
     </div>
 
-    <!-- Table -->
-    <div class="card">
+    <!-- Table with Single & Bulk Delete -->
+    <div class="card"
+         x-data="{
+            selected: [],
+            allIds: @js($allIds),
+            toggleAll(e) {
+                this.selected = e.target.checked ? [...this.allIds] : [];
+            }
+         }">
+
+        <!-- Bulk Action Bar -->
+        <div x-show="selected.length > 0" x-cloak
+             class="flex items-center justify-between border-b border-rose-200 bg-rose-50 px-5 py-3 text-xs">
+            <span class="font-semibold text-rose-900">
+                <span x-text="selected.length"></span> surat dipilih
+            </span>
+            <form method="POST" action="{{ route('surat.destroy-bulk') }}"
+                  onsubmit="return confirm('Hapus seluruh surat yang dipilih beserta lampiran dan riwayatnya?')">
+                @csrf
+                <template x-for="id in selected" :key="id">
+                    <input type="hidden" name="ids[]" :value="id">
+                </template>
+                <button type="submit" class="btn-danger btn-sm">
+                    Hapus Surat Terpilih (<span x-text="selected.length"></span>)
+                </button>
+            </form>
+        </div>
+
         <div class="table-wrap">
             <table class="table">
                 <thead>
                 <tr>
+                    <th class="w-8">
+                        <input type="checkbox"
+                               @change="toggleAll($event)"
+                               :checked="allIds.length > 0 && selected.length === allIds.length"
+                               class="rounded border-slate-300 text-brand-600 focus:ring-brand-500">
+                    </th>
                     <th>Nomor & Tanggal</th>
                     <th>Perihal</th>
                     <th>Pengirim</th>
                     <th>Klasifikasi</th>
                     <th>Status Terkini</th>
-                    <th></th>
+                    <th class="text-right">Aksi</th>
                 </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
                 @forelse($surat as $s)
+                    @php
+                        $bisaKelola = $authUser->isAdmin() || $authUser->isRektor() || $s->id_pengirim === $authUser->id_pengguna;
+                    @endphp
                     <tr>
+                        <td>
+                            @if($bisaKelola)
+                                <input type="checkbox" :value="{{ $s->id_surat }}" x-model="selected"
+                                       class="rounded border-slate-300 text-brand-600 focus:ring-brand-500">
+                            @endif
+                        </td>
                         <td>
                             <p class="font-mono text-xs font-semibold text-slate-800">{{ $s->nomor_surat }}</p>
                             <p class="text-xs text-slate-400">{{ $s->tanggal_surat?->format('d M Y') }}</p>
@@ -117,13 +162,22 @@
                             @endif
                         </td>
                         <td><x-status-badge :status="$s->status_terkini" /></td>
-                        <td class="text-right">
+                        <td class="text-right space-x-1.5">
                             <a href="{{ route('surat.show', $s) }}" class="btn-secondary btn-sm">Detail</a>
+                            @if($bisaKelola)
+                                <a href="{{ route('surat.edit', $s) }}" class="btn-secondary btn-sm">Edit</a>
+                                <form method="POST" action="{{ route('surat.destroy', $s) }}" class="inline"
+                                      onsubmit="return confirm('Hapus surat {{ $s->nomor_surat }}?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn-danger btn-sm">Hapus</button>
+                                </form>
+                            @endif
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="py-10 text-center text-sm text-slate-400">Tidak ditemukan data surat yang sesuai kriteria.</td>
+                        <td colspan="7" class="py-10 text-center text-sm text-slate-400">Tidak ditemukan data surat yang sesuai kriteria.</td>
                     </tr>
                 @endforelse
                 </tbody>

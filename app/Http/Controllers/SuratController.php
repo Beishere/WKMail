@@ -163,7 +163,36 @@ class SuratController extends Controller
         }
         $surat->delete();
 
-        return redirect()->route('surat.index')->with('success', 'Surat berhasil dihapus.');
+        $referer = $request->headers->get('referer');
+        if ($referer && ! str_contains($referer, '/surat/' . $surat->id_surat)) {
+            return back()->with('success', "Surat {$surat->nomor_surat} berhasil dihapus.");
+        }
+
+        return redirect()->route('surat.index')->with('success', "Surat {$surat->nomor_surat} berhasil dihapus.");
+    }
+
+    public function destroyBulk(Request $request): RedirectResponse
+    {
+        $ids = $request->validate([
+            'ids' => ['required', 'array', 'min:1'],
+            'ids.*' => ['integer', 'exists:surat,id_surat'],
+        ])['ids'];
+
+        $user = $request->user();
+        $daftar = Surat::whereIn('id_surat', $ids)->with('semuaLampiran')->get();
+        $terhapus = 0;
+
+        foreach ($daftar as $surat) {
+            if ($user->isAdmin() || $user->isRektor() || $surat->id_pengirim === $user->id_pengguna) {
+                foreach ($surat->semuaLampiran as $lamp) {
+                    Storage::disk('local')->delete($lamp->path_file);
+                }
+                $surat->delete();
+                $terhapus++;
+            }
+        }
+
+        return back()->with('success', "{$terhapus} surat berhasil dihapus.");
     }
 
     public function hapusLampiran(Request $request, Lampiran $lampiran): RedirectResponse
@@ -228,15 +257,10 @@ class SuratController extends Controller
     protected function pastikanBisaRevisi(Request $request, Surat $surat): void
     {
         $user = $request->user();
-        if ($user->isAdmin()) {
+        if ($user->isAdmin() || $user->isRektor() || $surat->id_pengirim === $user->id_pengguna) {
             return;
         }
 
-        abort_unless(
-            $surat->id_pengirim === $user->id_pengguna
-                && in_array($surat->status_terkini, [Surat::TERKIRIM, Surat::PERLU_REVISI], true),
-            403,
-            'Surat hanya dapat diubah/dihapus oleh pengirim sebelum divalidasi atau saat berstatus Perlu Revisi.'
-        );
+        abort(403, 'Anda tidak memiliki hak akses untuk mengubah atau menghapus surat ini.');
     }
 }

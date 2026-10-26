@@ -61,10 +61,16 @@
                             @endif
                         </td>
                         <td><x-status-badge :status="$s->status_terkini" /></td>
-                        <td class="text-right">
+                        <td class="text-right space-x-1.5">
                             <a href="{{ route('surat.show', $s) }}" class="{{ $tab === 'menunggu' ? 'btn-primary' : 'btn-secondary' }} btn-sm">
                                 {{ $tab === 'menunggu' ? 'Baca & Disposisi' : 'Detail' }}
                             </a>
+                            <form method="POST" action="{{ route('surat.destroy', $s) }}" class="inline"
+                                  onsubmit="return confirm('Hapus surat {{ $s->nomor_surat }}?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn-danger btn-sm">Hapus</button>
+                            </form>
                         </td>
                     </tr>
                 @empty

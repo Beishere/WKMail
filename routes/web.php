@@ -30,15 +30,14 @@ Route::middleware('auth')->group(function () {
 
     // ---------------------------------------------------------------- Surat (umum)
     Route::get('/surat', [SuratController::class, 'index'])->name('surat.index');
-    Route::middleware('role:pengirim,admin')->group(function () {
-        Route::get('/surat/buat', [SuratController::class, 'create'])->name('surat.create');
-        Route::post('/surat', [SuratController::class, 'store'])->name('surat.store');
-        Route::get('/surat/{surat}/revisi', [SuratController::class, 'edit'])->name('surat.edit');
-        Route::put('/surat/{surat}', [SuratController::class, 'update'])->name('surat.update');
-        Route::delete('/surat/{surat}', [SuratController::class, 'destroy'])->name('surat.destroy');
-        Route::delete('/lampiran/{lampiran}', [SuratController::class, 'hapusLampiran'])->name('lampiran.destroy');
-        Route::get('/template/{template}/render', [SuratController::class, 'renderTemplate'])->name('template.render');
-    });
+    Route::get('/surat/buat', [SuratController::class, 'create'])->name('surat.create');
+    Route::post('/surat', [SuratController::class, 'store'])->name('surat.store');
+    Route::post('/surat/hapus-terpilih', [SuratController::class, 'destroyBulk'])->name('surat.destroy-bulk');
+    Route::get('/surat/{surat}/revisi', [SuratController::class, 'edit'])->name('surat.edit');
+    Route::put('/surat/{surat}', [SuratController::class, 'update'])->name('surat.update');
+    Route::delete('/surat/{surat}', [SuratController::class, 'destroy'])->name('surat.destroy');
+    Route::delete('/lampiran/{lampiran}', [SuratController::class, 'hapusLampiran'])->name('lampiran.destroy');
+    Route::get('/template/{template}/render', [SuratController::class, 'renderTemplate'])->name('template.render');
     Route::get('/surat/{surat}', [SuratController::class, 'show'])->name('surat.show');
     Route::get('/lampiran/{lampiran}/unduh', [SuratController::class, 'unduh'])->name('lampiran.unduh');
     Route::get('/template/{template}/kop', [SuratController::class, 'kop'])->name('template.kop');
