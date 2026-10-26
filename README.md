@@ -1,3 +1,13 @@
+---
+title: WKMail Disposisi Surat Universitas
+emoji: 📨
+colorFrom: blue
+colorTo: indigo
+sdk: docker
+app_port: 8080
+pinned: false
+---
+
 # SIDISURAT — Sistem Disposisi Surat Online Universitas
 
 Aplikasi web manajemen dan disposisi surat masuk universitas berbasis **Laravel 11 + Blade + Tailwind CSS + Alpine.js + SQLite**, dirancang sesuai spesifikasi lengkap pada diagram (`Diagram Alur`, `ERD`, `Mind Map`, `Use Case`, `Activity Diagram`, `Flowchart`, `Cross-Functional`, dan `Sequence Diagram`).
@@ -25,26 +35,6 @@ Status pelacakan surat (`Online Tracking`):
   - **G**: Kerja Sama (→ WR I)
   - **Q**: Akademik (→ WR I)
   - **K**: Kemahasiswaan (→ WR III)
-
----
-
-## Cara Menjalankan Aplikasi
-
-1. Masuk ke direktori proyek:
-   ```powershell
-   cd d:\SMT9\CAPSTONE\disposisi-surat
-   ```
-2. Jika ingin mereset database & mengisi ulang data demo:
-   ```powershell
-   php artisan migrate:fresh --seed
-   ```
-3. Jalankan server pengembangan Laravel:
-   ```powershell
-   php artisan serve
-   ```
-4. Buka di browser: **http://127.0.0.1:8000**
-
-*(Halaman `/login` telah dilengkapi tombol **Login Cepat 1-Klik** untuk semua peran aktor).*
 
 ---
 

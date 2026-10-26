@@ -27,13 +27,16 @@ RUN npm install
 
 COPY . .
 
-RUN npm run build \
+RUN cp .env.example .env \
+    && npm run build \
     && rm -rf node_modules \
     && composer dump-autoload --optimize \
     && mkdir -p storage/framework/cache storage/framework/sessions storage/framework/views storage/logs bootstrap/cache database \
-    && chmod -R 777 /app/storage /app/bootstrap/cache /app/database \
+    && touch /app/database/database.sqlite \
+    && php artisan key:generate --force --ansi \
+    && chmod -R 777 /app \
     && chmod +x /app/docker-entrypoint.sh
 
-EXPOSE 8080 7860
+EXPOSE 8080
 
 ENTRYPOINT ["/app/docker-entrypoint.sh"]

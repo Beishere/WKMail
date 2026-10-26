@@ -25,6 +25,10 @@ class AppServiceProvider extends ServiceProvider
     {
         if (request()->header('X-Forwarded-Proto') === 'https' || request()->isSecure()) {
             \Illuminate\Support\Facades\URL::forceScheme('https');
+            config([
+                'session.secure' => true,
+                'session.same_site' => 'none',
+            ]);
         }
 
         Carbon::setLocale(config('app.locale', 'id'));
