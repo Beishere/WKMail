@@ -47,7 +47,7 @@ class Surat extends Model
     protected $fillable = [
         'nomor_surat', 'perihal', 'isi_surat', 'tanggal_surat', 'tanggal_diterima', 'sifat_surat',
         'kode_sumber', 'kode_bidang', 'id_pengirim', 'id_template', 'id_unit_saran', 'catatan_admin',
-        'status_terkini',
+        'status_terkini', 'status_sebelum_arsip',
     ];
 
     protected function casts(): array

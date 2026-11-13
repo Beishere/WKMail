@@ -17,7 +17,7 @@
     $theme = $authUser->theme();
 @endphp
 
-<div class="flex min-h-screen lg:h-screen lg:overflow-hidden">
+<div class="app-shell flex min-h-screen lg:h-screen lg:overflow-hidden">
     <!-- Mobile backdrop -->
     <div x-show="sidebarOpen" x-cloak @click="sidebarOpen = false"
          class="fixed inset-0 z-30 bg-slate-900/60 backdrop-blur-xs lg:hidden"></div>
@@ -320,5 +320,6 @@
         </main>
     </div>
 </div>
+@yield('print-content')
 </body>
 </html>

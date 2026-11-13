@@ -92,35 +92,35 @@ class MasterSeeder extends Seeder
             ]);
         }
 
-        // ------------------------------------------------------------ PENGGUNA RESMI UKWK (password: password)
+        // ------------------------------------------------------------ AKUN UJI (khusus demo/pengembangan)
         $akun = [
-            ['admin@widyakarya.ac.id', 'Sekretariat Rektorat UKWK', '198801012015042001', Role::ADMIN, $rektorat],
-            ['rektor@widyakarya.ac.id', 'Prof. Dr. Ir. Kukuk Yudiono, M.S.', '196505101990031001', Role::REKTOR, $rektorat],
-            ['wr1ukwk@widyakarya.ac.id', 'Harsa Dhani, S.T., M.T., Ph.D.', '197002021995031002', Role::WAKIL_REKTOR, $wr1],
-            ['wr2ukwk@widyakarya.ac.id', 'Galuh Budi Astuti, S.E., M.M.', '197103031996032001', Role::WAKIL_REKTOR, $wr2],
-            ['wr3ukwk@widyakarya.ac.id', 'Dr. Celina Tri Siwi, S.H., M.Hum.', '197204041997031003', Role::WAKIL_REKTOR, $wr3],
-            ['baa@widyakarya.ac.id', 'Kepala Biro Administrasi Akademik (BAA)', '198505052010042002', Role::UNIT_TEKNIS, $baa],
-            ['bau@widyakarya.ac.id', 'Kepala Biro Administrasi dan Umum (BAU)', '198606062011041001', Role::UNIT_TEKNIS, $bau],
-            ['bka@widyakarya.ac.id', 'Kepala Biro Kemahasiswaan & Alumni (BKA)', '199007072015041002', Role::UNIT_TEKNIS, $bka],
-            ['lppm@widyakarya.ac.id', 'Ketua LPPM UKWK', '198304122009041001', Role::UNIT_TEKNIS, $lppm],
-            ['lpm@widyakarya.ac.id', 'Ketua LPM UKWK', '198408192010042003', Role::UNIT_TEKNIS, $lpm],
-            ['pustik@widyakarya.ac.id', 'Kepala PUSTIK UKWK', '198911032014041002', Role::UNIT_TEKNIS, $pustik],
-            ['yayasan@widyakarya.ac.id', 'Budi Santoso Djadja, S.H., M.M. (Yayasan PTK Adisucipto)', null, Role::PENGIRIM, $yayasan],
-            ['feb@widyakarya.ac.id', 'Dekan Fakultas Ekonomi dan Bisnis (FEB)', null, Role::PENGIRIM, $feb],
-            ['teknik@widyakarya.ac.id', 'Dekan Fakultas Teknik (FT)', null, Role::PENGIRIM, $ft],
-            ['fh@widyakarya.ac.id', 'Dr. Diah Imaningrum Susanti, S.H., M.Hum. (Dekan FH)', null, Role::PENGIRIM, $fh],
-            ['pertanian@widyakarya.ac.id', 'Dekan Fakultas Pertanian (FP)', null, Role::PENGIRIM, $fp],
-            ['hmjsi@widyakarya.ac.id', 'Ketua HMJ Sistem Informasi eCommerce', null, Role::PENGIRIM, $hmjSi],
-            ['alumni@widyakarya.ac.id', 'Pengurus Ikatan Alumni UKWK', null, Role::PENGIRIM, $alumni],
-            ['mitra@institusi.co.id', 'Mitra Kerjasama Nasional & Internasional', null, Role::PENGIRIM, $eksternal],
+            ['admin@wkmail.ac.id', 'admin123', 'Sekretariat Rektorat UKWK', '198801012015042001', Role::ADMIN, $rektorat],
+            ['rektor@wkmail.ac.id', 'rektor123', 'Prof. Dr. Ir. Kukuk Yudiono, M.S.', '196505101990031001', Role::REKTOR, $rektorat],
+            ['wr1@wkmail.ac.id', 'wr1123', 'Harsa Dhani, S.T., M.T., Ph.D.', '197002021995031002', Role::WAKIL_REKTOR, $wr1],
+            ['wr2@wkmail.ac.id', 'wr2123', 'Galuh Budi Astuti, S.E., M.M.', '197103031996032001', Role::WAKIL_REKTOR, $wr2],
+            ['wr3@wkmail.ac.id', 'wr3123', 'Dr. Celina Tri Siwi, S.H., M.Hum.', '197204041997031003', Role::WAKIL_REKTOR, $wr3],
+            ['baa@wkmail.ac.id', 'baa123', 'Kepala Biro Administrasi Akademik (BAA)', '198505052010042002', Role::UNIT_TEKNIS, $baa],
+            ['bau@wkmail.ac.id', 'bau123', 'Kepala Biro Administrasi dan Umum (BAU)', '198606062011041001', Role::UNIT_TEKNIS, $bau],
+            ['bka@wkmail.ac.id', 'bka123', 'Kepala Biro Kemahasiswaan & Alumni (BKA)', '199007072015041002', Role::UNIT_TEKNIS, $bka],
+            ['lppm@wkmail.ac.id', 'lppm123', 'Ketua LPPM UKWK', '198304122009041001', Role::UNIT_TEKNIS, $lppm],
+            ['lpm@wkmail.ac.id', 'lpm123', 'Ketua LPM UKWK', '198408192010042003', Role::UNIT_TEKNIS, $lpm],
+            ['pustik@wkmail.ac.id', 'pustik123', 'Kepala PUSTIK UKWK', '198911032014041002', Role::UNIT_TEKNIS, $pustik],
+            ['yayasan@wkmail.ac.id', 'yayasan123', 'Budi Santoso Djadja, S.H., M.M. (Yayasan PTK Adisucipto)', null, Role::PENGIRIM, $yayasan],
+            ['feb@wkmail.ac.id', 'feb123', 'Dekan Fakultas Ekonomi dan Bisnis (FEB)', null, Role::PENGIRIM, $feb],
+            ['teknik@wkmail.ac.id', 'teknik123', 'Dekan Fakultas Teknik (FT)', null, Role::PENGIRIM, $ft],
+            ['fh@wkmail.ac.id', 'fh123', 'Dr. Diah Imaningrum Susanti, S.H., M.Hum. (Dekan FH)', null, Role::PENGIRIM, $fh],
+            ['pertanian@wkmail.ac.id', 'pertanian123', 'Dekan Fakultas Pertanian (FP)', null, Role::PENGIRIM, $fp],
+            ['hmjsi@wkmail.ac.id', 'hmjsi123', 'Ketua HMJ Sistem Informasi eCommerce', null, Role::PENGIRIM, $hmjSi],
+            ['alumni@wkmail.ac.id', 'alumni123', 'Pengurus Ikatan Alumni UKWK', null, Role::PENGIRIM, $alumni],
+            ['mitra@wkmail.ac.id', 'mitra123', 'Mitra Kerjasama Nasional & Internasional', null, Role::PENGIRIM, $eksternal],
         ];
 
-        foreach ($akun as [$email, $nama, $nip, $role, $unit]) {
+        foreach ($akun as [$email, $password, $nama, $nip, $role, $unit]) {
             Pengguna::create([
                 'email' => $email,
                 'nama' => $nama,
                 'nip' => $nip,
-                'password_hash' => 'password',
+                'password_hash' => $password,
                 'id_role' => $roles[$role]->id_role,
                 'id_unit' => $unit->id_unit,
                 'status_aktif' => true,

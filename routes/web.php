@@ -70,6 +70,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/surat-masuk', [RektorController::class, 'index'])->name('rektor.index');
         Route::post('/surat/{surat}/disposisi', [RektorController::class, 'disposisi'])->name('rektor.disposisi');
         Route::post('/surat/{surat}/arsip', [RektorController::class, 'arsip'])->name('rektor.arsip');
+        Route::post('/surat/{surat}/batal-arsip', [RektorController::class, 'batalArsip'])->name('rektor.batal-arsip');
     });
 
     // ---------------------------------------------------------------- Wakil Rektor & Unit Teknis

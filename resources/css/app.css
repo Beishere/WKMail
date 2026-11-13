@@ -37,10 +37,68 @@
     .nav-link { @apply flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium text-slate-200 transition hover:bg-white/10 hover:text-white; }
     .nav-link.active { @apply bg-white/15 text-white font-semibold; }
     .nav-section { @apply mb-1 mt-3 px-3 text-[10px] font-bold uppercase tracking-wider text-white/50; }
+
+    .print-only { display: none; }
 }
 
 @media print {
-    .no-print { display: none !important; }
-    body { background: #fff; }
-    .card { box-shadow: none; }
+    @page { size: A4; margin: 18mm 22mm 20mm; }
+
+    body {
+        min-height: 0;
+        margin: 0;
+        background: #fff;
+        color: #111;
+    }
+
+    body > .app-shell { display: none !important; }
+    body > .print-only { display: block !important; }
+
+    .print-letter {
+        color: #111;
+        font-family: "Times New Roman", serif;
+        font-size: 12pt;
+        line-height: 1.5;
+    }
+
+    .print-letterhead {
+        margin-bottom: 8mm;
+        padding-bottom: 3mm;
+        border-bottom: 1px solid #222;
+    }
+
+    .print-letterhead img {
+        display: block;
+        width: 100%;
+        height: auto;
+    }
+
+    .print-metadata {
+        margin-bottom: 8mm;
+    }
+
+    .print-metadata p {
+        display: grid;
+        grid-template-columns: 22mm 4mm minmax(0, 1fr);
+        margin: 0;
+        break-inside: avoid;
+    }
+
+    .print-letter-body {
+        white-space: pre-wrap;
+        text-align: justify;
+        overflow-wrap: anywhere;
+        orphans: 3;
+        widows: 3;
+    }
+
+    .print-signature {
+        max-width: 80mm;
+        margin: 8mm 0 0 auto;
+        text-align: right;
+        break-inside: avoid;
+    }
+
+    .print-signature p { margin: 0; }
+    .print-signature-space { height: 17mm; }
 }

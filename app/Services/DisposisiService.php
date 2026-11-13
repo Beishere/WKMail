@@ -13,6 +13,7 @@ use App\Models\Unit;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 /**
  * Mesin alur kerja disposisi surat.
@@ -143,10 +144,54 @@ class DisposisiService
     public function arsipkan(Surat $surat, Pengguna $rektor, ?string $catatan): void
     {
         DB::transaction(function () use ($surat, $rektor, $catatan) {
-            $surat->update(['status_terkini' => Surat::DIARSIPKAN]);
+            $surat->update([
+                'status_sebelum_arsip' => $surat->status_terkini,
+                'status_terkini' => Surat::DIARSIPKAN,
+            ]);
             $this->catat($surat, $rektor, Surat::DIARSIPKAN, 'Tidak memerlukan disposisi, diarsipkan sebagai informasi'
                 . ($catatan ? ". Catatan: {$catatan}" : ''));
             $this->notify($surat->pengirim, $surat, "Surat \"{$surat->perihal}\" telah diterima Rektor dan diarsipkan sebagai informasi.", 'selesai');
+        });
+    }
+
+    public function batalArsip(Surat $surat, Pengguna $rektor, string $catatan): void
+    {
+        DB::transaction(function () use ($surat, $rektor, $catatan) {
+            $statusSebelumArsip = $surat->status_sebelum_arsip
+                ?? RiwayatStatus::where('id_surat', $surat->id_surat)
+                    ->where('status', '!=', Surat::DIARSIPKAN)
+                    ->orderByDesc('waktu')
+                    ->orderByDesc('id_riwayat')
+                    ->value('status');
+
+            if (! in_array($statusSebelumArsip, [Surat::DIVALIDASI, Surat::DIBACA], true)) {
+                throw ValidationException::withMessages([
+                    'catatan' => 'Status surat sebelum diarsipkan tidak ditemukan, jadi surat tidak dapat dipulihkan otomatis.',
+                ]);
+            }
+
+            $surat->update([
+                'status_terkini' => $statusSebelumArsip,
+                'status_sebelum_arsip' => null,
+            ]);
+            $this->catat(
+                $surat,
+                $rektor,
+                $statusSebelumArsip,
+                "Pengarsipan dibatalkan oleh Rektor. Status dipulihkan ke {$statusSebelumArsip}. Alasan: {$catatan}"
+            );
+            $this->notify(
+                $surat->pengirim,
+                $surat,
+                "Pengarsipan surat \"{$surat->perihal}\" dibatalkan dan statusnya dipulihkan ke {$statusSebelumArsip}.",
+                'status'
+            );
+            $this->notify(
+                $this->penggunaRole(Role::ADMIN),
+                $surat,
+                "Surat \"{$surat->perihal}\" dipulihkan dari arsip oleh Rektor.",
+                'status'
+            );
         });
     }
 

@@ -63,4 +63,18 @@ class RektorController extends Controller
 
         return redirect()->route('rektor.index')->with('success', "Surat {$surat->nomor_surat} diarsipkan sebagai informasi.");
     }
+
+    public function batalArsip(Request $request, Surat $surat): RedirectResponse
+    {
+        abort_unless($surat->status_terkini === Surat::DIARSIPKAN, 422, 'Surat ini tidak sedang diarsipkan.');
+
+        $data = $request->validate([
+            'catatan' => ['required', 'string', 'max:1000'],
+        ]);
+
+        $this->service->batalArsip($surat, $request->user(), $data['catatan']);
+
+        return redirect()->route('rektor.index')
+            ->with('success', "Pengarsipan surat {$surat->nomor_surat} dibatalkan dan status sebelumnya dipulihkan.");
+    }
 }

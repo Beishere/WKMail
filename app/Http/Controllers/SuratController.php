@@ -132,9 +132,17 @@ class SuratController extends Controller
             ->orderBy('tanggal_disposisi')->get();
 
         $unitWr = Unit::where('jenis_unit', 'wakil_rektor')->orderBy('nama_unit')->get();
+        $isiSuratCetak = $this->wordService->splitSignatureBlock(
+            $this->wordService->bodyWithoutMetadata((string) $surat->isi_surat)
+        );
 
         return view('surat.show', [
             'surat' => $surat,
+            'isiCetak' => $isiSuratCetak['body'],
+            'penutupCetak' => [
+                'closing' => $isiSuratCetak['closing'],
+                'signer' => $isiSuratCetak['signer'],
+            ],
             'pohonDisposisi' => $pohonDisposisi,
             'disposisiSaya' => $disposisiSaya,
             'kategori' => KategoriSumber::orderBy('kode_sumber')->get(),

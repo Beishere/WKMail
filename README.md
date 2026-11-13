@@ -22,6 +22,7 @@ Aplikasi web manajemen dan disposisi surat masuk universitas berbasis **Laravel 
   - Ekspor/unduh draf surat ber-Kop Surat Resmi UKWK dalam format `.docx`.
   - Impor kembali berkas `.docx` hasil edit dengan ekstraksi otomatis ke form web.
 - **Pelacakan Status Real-Time (*Audit Trail*)**: `Terkirim` → `Perlu Revisi` → `Divalidasi` → `Dibaca` → `Didisposisi` → `Diproses` / `Pending` → `Selesai` / `Diarsipkan`.
+- **Arsip & Pemulihan Terkontrol**: Rektor dapat membatalkan pengarsipan dengan alasan; status sebelumnya dipulihkan dan tindakan dicatat di audit trail.
 - **Desain Responsif & Tema Berdasarkan Tingkat Jabatan**: UI adaptif untuk layar PC, laptop, tablet, dan smartphone dengan palet resmi UKWK (*Navy Blue* `#2d338c` dan *Orange* `#ed6623`).
 
 ---
@@ -47,25 +48,37 @@ Pengirim (Kode A/B/C) ──► Admin Surat Rektorat (Filter Utama) ──► Re
 
 ---
 
-## 👥 Daftar Akun Demo (Password semua akun: `password`)
+## 👥 Akun Uji Lokal
 
-| Tingkat / Peran | Nama Pejabat / Unit | Email |
-|---|---|---|
-| **Rektor UKWK (Tingkat I)** | Prof. Dr. Ir. Kukuk Yudiono, M.S. | `rektor@widyakarya.ac.id` |
-| **Admin Surat Rektorat (Tingkat II)** | Sekretariat Rektorat | `admin@widyakarya.ac.id` |
-| **Wakil Rektor I (Tingkat III)** | Harsa Dhani, Ph.D. (Akademik & Kerja Sama) | `wr1ukwk@widyakarya.ac.id` |
-| **Wakil Rektor II (Tingkat III)** | Galuh Budi Astuti, M.M. (Keuangan & Sarpras) | `wr2ukwk@widyakarya.ac.id` |
-| **Wakil Rektor III (Tingkat III)** | Dr. Celina Tri Siwi, M.Hum. (Kemahasiswaan) | `wr3ukwk@widyakarya.ac.id` |
-| **Unit Teknis BAA (Tingkat IV)** | Biro Administrasi Akademik | `baa@widyakarya.ac.id` |
-| **Unit Teknis BAU (Tingkat IV)** | Biro Administrasi Umum & Keuangan | `bau@widyakarya.ac.id` |
-| **Unit Teknis BKA (Tingkat IV)** | Biro Kemahasiswaan & Alumni | `bka@widyakarya.ac.id` |
-| **Yayasan (Tingkat Kehormatan)** | Yayasan PTK Adisucipto | `yayasan@widyakarya.ac.id` |
-| **Fakultas Teknik (Tingkat V)** | Fakultas Teknik (Pengirim) | `teknik@widyakarya.ac.id` |
-| **Fakultas Ekonomi (Tingkat V)** | Fakultas Ekonomi & Bisnis | `feb@widyakarya.ac.id` |
-| **Fakultas Hukum (Tingkat V)** | Dr. Diah Imaningrum Susanti, S.H., M.Hum. | `fh@widyakarya.ac.id` |
-| **HMJ Sistem Informasi (Tingkat V)** | HMJ Sistem Informasi eCommerce | `hmjsi@widyakarya.ac.id` |
-| **Ikatan Alumni (Tingkat V)** | Pengurus Alumni UKWK | `alumni@widyakarya.ac.id` |
-| **Mitra Eksternal (Kode C)** | PT Mitra Teknologi Nusantara | `mitra@institusi.co.id` |
+Akun berikut hanya untuk pengujian lokal/demo. Email `@wkmail.ac.id` adalah identitas login uji, bukan kotak surat aktif. Password sengaja sederhana agar alur tiap peran mudah diuji; jangan gunakan akun ini di produksi.
+
+Jika database lokal Anda masih menggunakan akun demo lama, perbarui email dan password akun seed tanpa menghapus surat atau riwayat:
+
+```bash
+php artisan db:seed --class="Database\Seeders\UpdateDemoAccountCredentialsSeeder"
+```
+
+| Tingkat / Peran | Nama Pejabat / Unit | Email Uji | Password Uji |
+|---|---|---|---|
+| **Rektor UKWK (Tingkat I)** | Prof. Dr. Ir. Kukuk Yudiono, M.S. | `rektor@wkmail.ac.id` | `rektor123` |
+| **Admin Surat Rektorat (Tingkat II)** | Sekretariat Rektorat | `admin@wkmail.ac.id` | `admin123` |
+| **Wakil Rektor I (Tingkat III)** | Harsa Dhani, Ph.D. (Akademik & Kerja Sama) | `wr1@wkmail.ac.id` | `wr1123` |
+| **Wakil Rektor II (Tingkat III)** | Galuh Budi Astuti, M.M. (Keuangan & Sarpras) | `wr2@wkmail.ac.id` | `wr2123` |
+| **Wakil Rektor III (Tingkat III)** | Dr. Celina Tri Siwi, M.Hum. (Kemahasiswaan) | `wr3@wkmail.ac.id` | `wr3123` |
+| **Unit Teknis BAA (Tingkat IV)** | Biro Administrasi Akademik | `baa@wkmail.ac.id` | `baa123` |
+| **Unit Teknis BAU (Tingkat IV)** | Biro Administrasi Umum & Keuangan | `bau@wkmail.ac.id` | `bau123` |
+| **Unit Teknis BKA (Tingkat IV)** | Biro Kemahasiswaan & Alumni | `bka@wkmail.ac.id` | `bka123` |
+| **Unit Teknis LPPM (Tingkat IV)** | Lembaga Penelitian dan Pengabdian Masyarakat | `lppm@wkmail.ac.id` | `lppm123` |
+| **Unit Teknis LPM (Tingkat IV)** | Lembaga Penjaminan Mutu | `lpm@wkmail.ac.id` | `lpm123` |
+| **Unit Teknis PUSTIK (Tingkat IV)** | Pusat Teknologi Informasi dan Komunikasi | `pustik@wkmail.ac.id` | `pustik123` |
+| **Yayasan (Tingkat Kehormatan)** | Yayasan PTK Adisucipto | `yayasan@wkmail.ac.id` | `yayasan123` |
+| **Fakultas Teknik (Tingkat V)** | Fakultas Teknik (Pengirim) | `teknik@wkmail.ac.id` | `teknik123` |
+| **Fakultas Ekonomi (Tingkat V)** | Fakultas Ekonomi & Bisnis | `feb@wkmail.ac.id` | `feb123` |
+| **Fakultas Hukum (Tingkat V)** | Dr. Diah Imaningrum Susanti, S.H., M.Hum. | `fh@wkmail.ac.id` | `fh123` |
+| **Fakultas Pertanian (Tingkat V)** | Fakultas Pertanian | `pertanian@wkmail.ac.id` | `pertanian123` |
+| **HMJ Sistem Informasi (Tingkat V)** | HMJ Sistem Informasi eCommerce | `hmjsi@wkmail.ac.id` | `hmjsi123` |
+| **Ikatan Alumni (Tingkat V)** | Pengurus Alumni UKWK | `alumni@wkmail.ac.id` | `alumni123` |
+| **Mitra Eksternal (Kode C)** | Mitra Kerjasama Nasional & Internasional | `mitra@wkmail.ac.id` | `mitra123` |
 
 ---
 

@@ -31,15 +31,15 @@
         <!-- Left 7 cols: Informasi Surat, Isi, Lampiran, Pohon Disposisi (Tabbed) -->
         <div class="xl:col-span-7" x-data="{ tabLeft: 'isi' }">
             <div class="card">
-                <div class="card-header">
-                    <div class="min-w-0 flex-1">
+                <div class="card-header flex-col items-stretch">
+                    <div class="w-full min-w-0">
                         <div class="flex flex-wrap items-center gap-2">
                             <span class="font-mono text-xs text-slate-500">{{ $surat->nomor_surat }}</span>
                             <x-status-badge :status="$surat->status_terkini" />
                         </div>
                         <h2 class="mt-0.5 text-sm sm:text-base font-bold text-slate-900 leading-snug break-words">{{ $surat->perihal }}</h2>
                     </div>
-                    <div class="no-print flex flex-wrap items-center gap-1.5">
+                    <div class="no-print flex w-full flex-wrap items-center gap-1.5">
                         <div class="flex rounded-lg bg-slate-100 p-0.5 text-xs font-semibold mr-1">
                             <button type="button" @click="tabLeft = 'isi'"
                                     :class="tabLeft === 'isi' ? 'bg-white text-brand-700 shadow-sm' : 'text-slate-500'"
@@ -409,6 +409,28 @@
                 </div>
             @endif
 
+            @if($user->isRektor() && $surat->status_terkini === \App\Models\Surat::DIARSIPKAN)
+                <div class="card border-2 border-amber-500/30">
+                    <div class="card-header bg-amber-50/70">
+                        <div>
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-amber-700">Surat Diarsipkan</span>
+                            <h3 class="card-title">Batalkan Pengarsipan</h3>
+                        </div>
+                    </div>
+                    <form method="POST" action="{{ route('rektor.batal-arsip', $surat) }}" class="card-body space-y-3">
+                        @csrf
+                        <p class="text-xs text-slate-600">Status surat akan dikembalikan ke status sebelum diarsipkan. Alasan pembatalan akan dicatat di riwayat.</p>
+                        <div>
+                            <label class="form-label">Alasan Pembatalan <span class="text-rose-600">*</span></label>
+                            <textarea name="catatan" rows="2" maxlength="1000" required
+                                      placeholder="Jelaskan mengapa surat perlu dikembalikan dari arsip..."
+                                      class="form-input">{{ old('catatan') }}</textarea>
+                        </div>
+                        <button type="submit" class="btn-warning w-full">Batalkan Pengarsipan</button>
+                    </form>
+                </div>
+            @endif
+
             {{-- ============================================================ 3. PANEL WAKIL REKTOR & UNIT TEKNIS --}}
             @foreach($disposisiSaya as $dispItem)
                 @if(! in_array($dispItem->status, [\App\Models\Surat::SELESAI, \App\Models\Surat::DIDISPOSISI], true))
@@ -520,7 +542,12 @@
             <!-- Timeline Riwayat Status -->
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">Riwayat Pelacakan Status (Audit Trail)</h3>
+                    <div>
+                        <h3 class="card-title">Riwayat Pelacakan Status (Audit Trail)</h3>
+                        <p class="mt-1 text-[11px] text-slate-500">
+                            Status pada riwayat berlaku untuk aktivitas atau unit terkait. Status keseluruhan surat ada pada pelacak di atas, sehingga surat dapat tetap Diproses jika unit lain belum selesai.
+                        </p>
+                    </div>
                 </div>
                 <div class="card-body max-h-60 overflow-y-auto">
                     <ol class="relative border-l-2 border-slate-200 ml-2 space-y-3">
@@ -544,5 +571,38 @@
                 </div>
             </div>
         </div>
+    </div>
+@endsection
+
+@section('print-content')
+    <div class="print-only">
+        <article class="print-letter">
+            <div class="print-letterhead">
+                <img src="{{ $surat->template?->path_kop ? route('template.kop', $surat->template) : asset('kop-ukwk.jpeg') }}"
+                     alt="Kop Surat UKWK">
+            </div>
+
+            <div class="print-metadata">
+                <p><span>Nomor</span><span>:</span><span>{{ $surat->nomor_surat ?: '-' }}</span></p>
+                <p><span>Tanggal</span><span>:</span><span>{{ $surat->tanggal_surat?->translatedFormat('d F Y') ?? '-' }}</span></p>
+                <p><span>Sifat</span><span>:</span><span>{{ $surat->sifat_surat }}</span></p>
+                <p><span>Perihal</span><span>:</span><span>{{ $surat->perihal }}</span></p>
+            </div>
+
+            <div class="print-letter-body">{{ $isiCetak ?: 'Tidak ada isi surat.' }}</div>
+            @if($penutupCetak['closing'])
+                <div class="print-signature">
+                    @foreach($penutupCetak['closing'] as $line)
+                        <p>{{ $line }}</p>
+                    @endforeach
+                    @if($penutupCetak['signer'])
+                        <div class="print-signature-space"></div>
+                        @foreach($penutupCetak['signer'] as $line)
+                            <p>{{ $line }}</p>
+                        @endforeach
+                    @endif
+                </div>
+            @endif
+        </article>
     </div>
 @endsection

@@ -13,35 +13,38 @@
 @php
     $demoAccounts = [
         ['group' => 'Tingkat I–III • Rektorat & Pimpinan UKWK (Periode 2024–2028)', 'items' => [
-            ['label' => 'Prof. Dr. Ir. Kukuk Yudiono, M.S.', 'sub' => 'Rektor UKWK (Pemberi Disposisi)', 'email' => 'rektor@widyakarya.ac.id', 'badge' => 'Rektor • Tkt I', 'color' => 'bg-[#2d338c] text-white'],
-            ['label' => 'Sekretariat Rektorat UKWK', 'sub' => 'Admin WKMail (Filter Utama)', 'email' => 'admin@widyakarya.ac.id', 'badge' => 'Admin • Tkt II', 'color' => 'bg-[#ed6623] text-white'],
-            ['label' => 'Harsa Dhani, S.T., M.T., Ph.D.', 'sub' => 'Wakil Rektor I (Bidang Akademik)', 'email' => 'wr1ukwk@widyakarya.ac.id', 'badge' => 'WR I • Tkt III', 'color' => 'bg-violet-600 text-white'],
-            ['label' => 'Galuh Budi Astuti, S.E., M.M.', 'sub' => 'Wakil Rektor II (Adm. Umum & Keuangan)', 'email' => 'wr2ukwk@widyakarya.ac.id', 'badge' => 'WR II • Tkt III', 'color' => 'bg-violet-600 text-white'],
-            ['label' => 'Dr. Celina Tri Siwi, S.H., M.Hum.', 'sub' => 'Wakil Rektor III (Kemahasiswaan & Alumni)', 'email' => 'wr3ukwk@widyakarya.ac.id', 'badge' => 'WR III • Tkt III', 'color' => 'bg-violet-600 text-white'],
+            ['label' => 'Prof. Dr. Ir. Kukuk Yudiono, M.S.', 'sub' => 'Rektor UKWK (Pemberi Disposisi)', 'email' => 'rektor@wkmail.ac.id', 'password' => 'rektor123', 'badge' => 'Rektor • Tkt I', 'color' => 'bg-[#2d338c] text-white'],
+            ['label' => 'Sekretariat Rektorat UKWK', 'sub' => 'Admin WKMail (Filter Utama)', 'email' => 'admin@wkmail.ac.id', 'password' => 'admin123', 'badge' => 'Admin • Tkt II', 'color' => 'bg-[#ed6623] text-white'],
+            ['label' => 'Harsa Dhani, S.T., M.T., Ph.D.', 'sub' => 'Wakil Rektor I (Bidang Akademik)', 'email' => 'wr1@wkmail.ac.id', 'password' => 'wr1123', 'badge' => 'WR I • Tkt III', 'color' => 'bg-violet-600 text-white'],
+            ['label' => 'Galuh Budi Astuti, S.E., M.M.', 'sub' => 'Wakil Rektor II (Adm. Umum & Keuangan)', 'email' => 'wr2@wkmail.ac.id', 'password' => 'wr2123', 'badge' => 'WR II • Tkt III', 'color' => 'bg-violet-600 text-white'],
+            ['label' => 'Dr. Celina Tri Siwi, S.H., M.Hum.', 'sub' => 'Wakil Rektor III (Kemahasiswaan & Alumni)', 'email' => 'wr3@wkmail.ac.id', 'password' => 'wr3123', 'badge' => 'WR III • Tkt III', 'color' => 'bg-violet-600 text-white'],
         ]],
         ['group' => 'Tingkat IV • Biro & Unit Pendukung UKWK', 'items' => [
-            ['label' => 'BAA — Biro Administrasi Akademik', 'sub' => 'baa@widyakarya.ac.id', 'email' => 'baa@widyakarya.ac.id', 'badge' => 'BAA • Tkt IV', 'color' => 'bg-emerald-600 text-white'],
-            ['label' => 'BAU — Biro Administrasi dan Umum', 'sub' => 'bau@widyakarya.ac.id', 'email' => 'bau@widyakarya.ac.id', 'badge' => 'BAU • Tkt IV', 'color' => 'bg-emerald-600 text-white'],
-            ['label' => 'BKA — Biro Kemahasiswaan & Alumni', 'sub' => 'bka@widyakarya.ac.id', 'email' => 'bka@widyakarya.ac.id', 'badge' => 'BKA • Tkt IV', 'color' => 'bg-emerald-600 text-white'],
-            ['label' => 'LPPM / LPM / PUSTIK UKWK', 'sub' => 'lppm@widyakarya.ac.id', 'email' => 'lppm@widyakarya.ac.id', 'badge' => 'LPPM • Tkt IV', 'color' => 'bg-emerald-600 text-white'],
+            ['label' => 'BAA — Biro Administrasi Akademik', 'sub' => 'baa@wkmail.ac.id', 'email' => 'baa@wkmail.ac.id', 'password' => 'baa123', 'badge' => 'BAA • Tkt IV', 'color' => 'bg-emerald-600 text-white'],
+            ['label' => 'BAU — Biro Administrasi dan Umum', 'sub' => 'bau@wkmail.ac.id', 'email' => 'bau@wkmail.ac.id', 'password' => 'bau123', 'badge' => 'BAU • Tkt IV', 'color' => 'bg-emerald-600 text-white'],
+            ['label' => 'BKA — Biro Kemahasiswaan & Alumni', 'sub' => 'bka@wkmail.ac.id', 'email' => 'bka@wkmail.ac.id', 'password' => 'bka123', 'badge' => 'BKA • Tkt IV', 'color' => 'bg-emerald-600 text-white'],
+            ['label' => 'Ketua LPPM UKWK', 'sub' => 'lppm@wkmail.ac.id', 'email' => 'lppm@wkmail.ac.id', 'password' => 'lppm123', 'badge' => 'LPPM • Tkt IV', 'color' => 'bg-emerald-600 text-white'],
+            ['label' => 'Ketua LPM UKWK', 'sub' => 'lpm@wkmail.ac.id', 'email' => 'lpm@wkmail.ac.id', 'password' => 'lpm123', 'badge' => 'LPM • Tkt IV', 'color' => 'bg-emerald-600 text-white'],
+            ['label' => 'Kepala PUSTIK UKWK', 'sub' => 'pustik@wkmail.ac.id', 'email' => 'pustik@wkmail.ac.id', 'password' => 'pustik123', 'badge' => 'PUSTIK • Tkt IV', 'color' => 'bg-emerald-600 text-white'],
         ]],
         ['group' => 'Tingkat V • Pengirim Surat (Yayasan A / Fakultas & Internal B / Mitra C)', 'items' => [
-            ['label' => 'Budi Santoso Djadja, S.H., M.M.', 'sub' => 'Yayasan PTK Adisucipto Malang', 'email' => 'yayasan@widyakarya.ac.id', 'badge' => 'Kode A • Yayasan', 'color' => 'bg-amber-500 text-slate-950'],
-            ['label' => 'Dr. Diah Imaningrum Susanti, S.H., M.Hum.', 'sub' => 'Dekan Fakultas Hukum (FH)', 'email' => 'fh@widyakarya.ac.id', 'badge' => 'Kode B • FH', 'color' => 'bg-sky-600 text-white'],
-            ['label' => 'Dekan Fakultas Teknik (FT)', 'sub' => 'Mesin, Sipil, SI eCommerce', 'email' => 'teknik@widyakarya.ac.id', 'badge' => 'Kode B • FT', 'color' => 'bg-sky-600 text-white'],
-            ['label' => 'Dekan Fakultas Ekonomi & Bisnis (FEB)', 'sub' => 'Manajemen & Akuntansi', 'email' => 'feb@widyakarya.ac.id', 'badge' => 'Kode B • FEB', 'color' => 'bg-sky-600 text-white'],
-            ['label' => 'Dekan Fakultas Pertanian (FP)', 'sub' => 'Agribisnis & Teknologi Pangan', 'email' => 'pertanian@widyakarya.ac.id', 'badge' => 'Kode B • FP', 'color' => 'bg-sky-600 text-white'],
-            ['label' => 'HMJ Sistem Informasi eCommerce', 'sub' => 'hmjsi@widyakarya.ac.id', 'email' => 'hmjsi@widyakarya.ac.id', 'badge' => 'Kode B • HMJ', 'color' => 'bg-sky-600 text-white'],
-            ['label' => 'Mitra Kerjasama Nasional & Internasional', 'sub' => 'mitra@institusi.co.id', 'email' => 'mitra@institusi.co.id', 'badge' => 'Kode C • Mitra', 'color' => 'bg-slate-700 text-white'],
+            ['label' => 'Budi Santoso Djadja, S.H., M.M.', 'sub' => 'Yayasan PTK Adisucipto Malang', 'email' => 'yayasan@wkmail.ac.id', 'password' => 'yayasan123', 'badge' => 'Kode A • Yayasan', 'color' => 'bg-amber-500 text-slate-950'],
+            ['label' => 'Dr. Diah Imaningrum Susanti, S.H., M.Hum.', 'sub' => 'Dekan Fakultas Hukum (FH)', 'email' => 'fh@wkmail.ac.id', 'password' => 'fh123', 'badge' => 'Kode B • FH', 'color' => 'bg-sky-600 text-white'],
+            ['label' => 'Dekan Fakultas Teknik (FT)', 'sub' => 'Mesin, Sipil, SI eCommerce', 'email' => 'teknik@wkmail.ac.id', 'password' => 'teknik123', 'badge' => 'Kode B • FT', 'color' => 'bg-sky-600 text-white'],
+            ['label' => 'Dekan Fakultas Ekonomi & Bisnis (FEB)', 'sub' => 'Manajemen & Akuntansi', 'email' => 'feb@wkmail.ac.id', 'password' => 'feb123', 'badge' => 'Kode B • FEB', 'color' => 'bg-sky-600 text-white'],
+            ['label' => 'Dekan Fakultas Pertanian (FP)', 'sub' => 'Agribisnis & Teknologi Pangan', 'email' => 'pertanian@wkmail.ac.id', 'password' => 'pertanian123', 'badge' => 'Kode B • FP', 'color' => 'bg-sky-600 text-white'],
+            ['label' => 'HMJ Sistem Informasi eCommerce', 'sub' => 'hmjsi@wkmail.ac.id', 'email' => 'hmjsi@wkmail.ac.id', 'password' => 'hmjsi123', 'badge' => 'Kode B • HMJ', 'color' => 'bg-sky-600 text-white'],
+            ['label' => 'Pengurus Ikatan Alumni UKWK', 'sub' => 'alumni@wkmail.ac.id', 'email' => 'alumni@wkmail.ac.id', 'password' => 'alumni123', 'badge' => 'Kode B • Alumni', 'color' => 'bg-sky-600 text-white'],
+            ['label' => 'Mitra Kerjasama Nasional & Internasional', 'sub' => 'mitra@wkmail.ac.id', 'email' => 'mitra@wkmail.ac.id', 'password' => 'mitra123', 'badge' => 'Kode C • Mitra', 'color' => 'bg-slate-700 text-white'],
         ]],
     ];
 @endphp
 
 <div class="w-full max-w-6xl my-auto grid grid-cols-1 lg:grid-cols-12 rounded-2xl bg-white shadow-2xl overflow-hidden border-t-4 border-[#ed6623]"
      x-data="{
-        fillLogin(email) {
+        fillLogin(email, password) {
             this.$refs.email.value = email;
-            this.$refs.password.value = 'password';
+            this.$refs.password.value = password;
             this.$refs.form.submit();
         }
      }">
@@ -76,7 +79,7 @@
                 <div>
                     <label class="form-label" for="email">Email Resmi UKWK</label>
                     <input x-ref="email" id="email" type="email" name="email" value="{{ old('email') }}" required autofocus
-                           placeholder="nama@widyakarya.ac.id" class="form-input">
+                           placeholder="nama@wkmail.ac.id" class="form-input">
                 </div>
 
                 <div>
@@ -90,7 +93,7 @@
                         <input type="checkbox" name="remember" class="rounded border-slate-300 text-[#2d338c] focus:ring-[#2d338c]">
                         Ingat sesi
                     </label>
-                    <span class="text-slate-500">Password demo: <code class="font-bold text-slate-800">password</code></span>
+                    <span class="text-slate-500">Password uji sesuai jabatan (contoh: <code class="font-bold text-slate-800">rektor123</code>)</span>
                 </div>
 
                 <button type="submit" class="w-full rounded-lg bg-[#ed6623] hover:bg-[#d95316] text-white font-bold py-2.5 text-xs shadow-sm transition">
@@ -117,7 +120,7 @@
                     <h4 class="mb-1.5 text-[11px] font-bold uppercase tracking-wider text-slate-500">{{ $grp['group'] }}</h4>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         @foreach($grp['items'] as $acc)
-                            <button type="button" @click="fillLogin('{{ $acc['email'] }}')"
+                            <button type="button" @click="fillLogin('{{ $acc['email'] }}', '{{ $acc['password'] }}')"
                                     class="group flex items-start justify-between gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-left transition hover:border-[#ed6623] hover:bg-orange-50/40 shadow-sm">
                                 <div class="min-w-0 flex-1">
                                     <p class="text-xs font-bold text-slate-800 group-hover:text-[#2d338c] leading-snug break-words">{{ $acc['label'] }}</p>
